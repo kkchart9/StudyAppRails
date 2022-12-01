@@ -21,7 +21,7 @@ gem 'net-pop'
 gem 'net-smtp'
 
 group :development, :test do
-  gem 'sqlite3', '~> 1.3.0'
+  gem 'sqlite3', '1.3.13'
   gem 'byebug',  '9.0.6', platform: :mri
 end
 
