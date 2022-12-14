@@ -7,6 +7,6 @@ if Rails.env.production?
       :aws_access_key_id     => 'AKIAZ67VTXJXPKB5Q7MO',
       :aws_secret_access_key => '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'
     }
-    config.fog_directory     =  'studymanagementapp'
+    config.fog_directory     =  studymanagementapp
   end
 end
