@@ -22,7 +22,7 @@ if Rails.env.production?
     config.fog_credentials = {
       # Amazon S3用の設定
       :provider              => "AWS",
-      :region                => "ap-northeast-1",
+      :region                => "us-east-1",
       :aws_access_key_id     => "AKIAZ67VTXJXPKB5Q7MO",
       :aws_secret_access_key => "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"
     }
