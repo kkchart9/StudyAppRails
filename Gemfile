@@ -26,7 +26,6 @@ gem 'jbuilder',     '2.7.0'
 gem 'net-imap'
 gem 'net-pop'
 gem 'net-smtp'
-gem 'sqlite3', '~> 1.3.6'
 
 group :development, :test do
   gem 'sqlite3', '1.3.13'
