@@ -19,6 +19,10 @@ textarea {
   resize: vertical;
 }
 
+.container {
+  width: 640px;
+}
+
 .center {
   text-align: center;
   h1 {
@@ -51,6 +55,38 @@ h2 {
 p {
   font-size: 1.1em;
   line-height: 1.7em;
+}
+
+li {
+  list-style: none;
+}
+
+a{
+  position: relative;
+  display: inline-block;
+  transition: .3s;
+  color: #2E2F30;
+}
+
+a::after {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  content: '';
+  width: 0;
+  height: 2px;
+  background-color: #bbbbbb;
+  transition: .3s;
+  transform: translateX(-50%);
+}
+
+a:hover::after{
+  width: 100%;
+}
+
+a:hover {
+  color: #bbbbbb;
+  text-decoration: none;
 }
 
 
@@ -97,28 +133,6 @@ footer {
   }
 }
 
-.stats {
-  overflow: auto;
-  margin-top: 0;
-  padding: 0;
-  a {
-    float: left;
-    padding: 0 10px;
-    border-left: 1px solid $gray-lighter;
-    color: gray;
-    &:first-child {
-      padding-left: 0;
-      border: 0;
-    }
-    &:hover {
-      text-decoration: none;
-      color: blue;
-    }
-  }
-  strong {
-    display: block;
-  }
-}
 
 .user_avatars {
   overflow: auto;
@@ -208,3 +222,54 @@ span.picture {
     border: 0;
   }
 }
+
+
+/* home */
+
+.works-content {
+  margin-top: 24px;
+  .works{
+    height: 40px;
+    border-bottom: 1px solid #eaeaea;
+    display: flex;
+    .date {
+      font-size: 24px;
+      width: 64px;
+    }
+    .work {
+      height: 100%;
+    }
+  }
+}
+
+.popup {
+  display: none;
+  position: fixed;
+  background-color: #F7F7F7;
+  margin-left: 32px;
+  height: 320px;
+  text-align: center;
+  #popup-close {
+    align-items: flex-end;
+  }
+}
+
+
+
+/* user_info */
+.user_info {
+  margin: auto;
+  h1 {
+    font-size: 40px;
+  }
+}
+
+/* stats */
+.stats {
+  text-align: center;
+  a {
+    margin-left: 16px;
+    font-size: 16px;
+  }
+}
+

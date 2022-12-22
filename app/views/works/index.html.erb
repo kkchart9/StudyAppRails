@@ -1,0 +1,7 @@
+<h1>こちらはindex.htmlです。</h1>
+<% @works.each do |work| %>
+  <%= work.work_time %>
+<% end %>
+
+<%= link_to "前の月のリンク",works_path(month:@month.prev_month) %>
+<%= link_to "次の月のリンク",works_path(month:@month.next_month) %>

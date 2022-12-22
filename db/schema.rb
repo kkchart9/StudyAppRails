@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20221215090221) do
+ActiveRecord::Schema.define(version: 20221221085010) do
 
   create_table "microposts", force: :cascade do |t|
     t.text     "content"
@@ -46,6 +46,14 @@ ActiveRecord::Schema.define(version: 20221215090221) do
     t.string   "reset_digest"
     t.datetime "reset_sent_at"
     t.index ["email"], name: "index_users_on_email", unique: true
+  end
+
+  create_table "works", force: :cascade do |t|
+    t.datetime "work_time"
+    t.integer  "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_works_on_user_id"
   end
 
 end

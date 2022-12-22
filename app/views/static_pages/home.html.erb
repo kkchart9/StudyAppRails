@@ -1,34 +1,72 @@
+<%
+  last_day = Date.today.end_of_month.mday
+  month = params[:month] ? Date.parse(params[:month]).month : Date.today.month
+%>
+
 <% if logged_in? %>
   <div class="row">
-    <aside class="col-md-4">
-      <section class="user_info">
-        <%= render 'shared/user_info' %>
-      </section>
-      <section class="stats">
-        <%= render 'shared/stats' %>
-      </section>
-      <section class="micropost_form">
-        <%= render 'shared/micropost_form' %>
-      </section>
-    </aside>
-    <div class="col-md-8">
-      <h3>Micropost Feed</h3>
-      <%= render 'shared/feed' %>
-    </div>
+    <%= render 'shared/user_info' %>
+    <%= render 'shared/stats' %>
   </div>
+
+  <button id="register">Workを登録する</button>
+
+  <% @works.each do |a| %>
+    <%= a.work_time %>
+  <% end %>
+  <%= link_to "前の月のリンク",root_url(month:@month.prev_month) %>
+  <%= link_to "次の月のリンク",root_url(month:@month.next_month) %>
+
+
+  <div class="popup">
+    <div class="content">
+      <%= form_for(@work, url: works_path) do |f| %>
+        <%= f.label :work_time %>
+        <%= raw sprintf(
+                  f.date_select(
+                    :work_time,
+                    use_month_numbers: true,
+                    date_separator: '%s',
+                    default: { month: month, day: params[:month] ? 1 : Date.today.day }),
+                  '年 ', '月 ') + '日' %>
+
+        <%#= f.datetime_select :work_time, class: 'form-control' %>
+        <%= f.submit "Post", class: "btn btn-primary" %>
+      <% end %>
+    </div>
+    <button id="popup-close">閉じる</button>
+  </div>
+
+  <div class="works-content">
+    <% last_day.times do |day| %>
+      <div class="works">
+        <div class="date">
+          <%= month %>/<%= day+1 %>
+        </div>
+        <div class="work">
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+
+
 <% else %>
   <div class="center jumbotron">
-    <h1>Welcome to the Sample App</h1>
-
-    <h2>
-      This is the home page for the
-      <a href="https://railstutorial.jp/">Ruby on Rails Tutorial</a>
-      sample application.
-    </h2>
-
-    <%= link_to "Sign up now!", signup_path, class: "btn btn-lg btn-primary" %>
+    <h1>WORK CHART<span>へようこそ！</span></h1>
+    <li>
+      <%= link_to "ログイン", login_path %>
+      <%= link_to "新規登録", signup_path %>
+    </li>
   </div>
-
-  <%= link_to image_tag("rails.png", alt: "Rails logo"),
-              'http://rubyonrails.org/' %>
 <% end %>
+
+<script type="text/javascript" charset="utf-8">
+    $('#register').on('click', function () {
+        $('.popup').fadeIn();
+    });
+
+    $('#popup-close').on('click', function () {
+        $('.popup').fadeOut();
+    });
+</script>

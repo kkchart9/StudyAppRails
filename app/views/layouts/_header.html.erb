@@ -1,6 +1,6 @@
 <header class="navbar navbar-fixed-top navbar-inverse">
   <div class="container">
-    <%= link_to "WORK CHART", '#', id: "logo" %>
+    <%= link_to "WORK CHART", root_url, id: "logo" %>
     <nav>
       <ul class="nav navbar-nav navbar-right">
         <li><%= link_to "Home", root_path %></li>
@@ -20,8 +20,6 @@
               </li>
             </ul>
           </li>
-        <% else %>
-          <li><%= link_to "Log in", login_path %></li>
         <% end %>
       </ul>
     </nav>

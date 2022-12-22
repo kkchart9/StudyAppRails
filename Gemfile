@@ -5,7 +5,7 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-ruby "2.6.8"
+ruby "2.6.10"
 # zsh '2.6.10'
 # bash "2.6.8"なぜ？
 gem 'rails',        '5.0.3'
