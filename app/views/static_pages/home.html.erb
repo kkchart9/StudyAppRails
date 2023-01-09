@@ -1,37 +1,37 @@
-<%
-  last_day = params[:month] ? Date.new(Date.parse(params[:month]).year, Date.parse(params[:month]).month, -1).day : Date.new(Date.today.year, Date.today.month, -1).day
-  month = params[:month] ? Date.parse(params[:month]).month : Date.today.month
 
-  works_list = {}
-  @month_works.each do |work|
-    work_time = work.work_time_hour.to_s + ":" + work.work_time_minute.to_s
+<% if logged_in? %>
+  <%
+    last_day = params[:month] ? Date.new(Date.parse(params[:month]).year, Date.parse(params[:month]).month, -1).day : Date.new(Date.today.year, Date.today.month, -1).day
+    month = params[:month] ? Date.parse(params[:month]).month : Date.today.month
 
-    if works_list[work.work_date.day]
-      works_list[work.work_date.day].push(work_time)
-    else
-      works_list[work.work_date.day] = [work_time]
-    end
-  end
+    works_list = {}
+    @month_works.each do |work|
+      work_time = work.work_time_hour.to_s + ":" + work.work_time_minute.to_s
 
-  # 日にちごとの総Work時間を取得
-  def total_time_day(works_time_list)
-    hour = 0
-    minute = 0
-    works_time_list.each do |time|
-      hour_tmp, minute_tmp = time.split(":")
-      hour += hour_tmp.to_i
-      minute += minute_tmp.to_i
-      if minute >= 60
-        hour += 1
-        minute = 60 - minute
+      if works_list[work.work_date.day]
+        works_list[work.work_date.day].push(work_time)
+      else
+        works_list[work.work_date.day] = [work_time]
       end
     end
 
-    return hour.to_s, minute.to_s
-  end
-%>
+    # 日にちごとの総Work時間を取得
+    def total_time_day(works_time_list)
+      hour = 0
+      minute = 0
+      works_time_list.each do |time|
+        hour_tmp, minute_tmp = time.split(":")
+        hour += hour_tmp.to_i
+        minute += minute_tmp.to_i
+        if minute >= 60
+          hour += 1
+          minute = 60 - minute
+        end
+      end
 
-<% if logged_in? %>
+      return hour.to_s, minute.to_s
+    end
+  %>
   <div class="row">
     <%= render 'shared/user_info' %>
     <%= render 'shared/stats' %>
