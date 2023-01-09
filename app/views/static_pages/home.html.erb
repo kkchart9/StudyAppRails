@@ -1,6 +1,34 @@
 <%
-  last_day = Date.today.end_of_month.mday
+  last_day = params[:month] ? Date.new(Date.parse(params[:month]).year, Date.parse(params[:month]).month, -1).day : Date.new(Date.today.year, Date.today.month, -1).day
   month = params[:month] ? Date.parse(params[:month]).month : Date.today.month
+
+  works_list = {}
+  @month_works.each do |work|
+    work_time = work.work_time_hour.to_s + ":" + work.work_time_minute.to_s
+
+    if works_list[work.work_date.day]
+      works_list[work.work_date.day].push(work_time)
+    else
+      works_list[work.work_date.day] = [work_time]
+    end
+  end
+
+  # 日にちごとの総Work時間を取得
+  def total_time_day(works_time_list)
+    hour = 0
+    minute = 0
+    works_time_list.each do |time|
+      hour_tmp, minute_tmp = time.split(":")
+      hour += hour_tmp.to_i
+      minute += minute_tmp.to_i
+      if minute >= 60
+        hour += 1
+        minute = 60 - minute
+      end
+    end
+
+    return hour.to_s, minute.to_s
+  end
 %>
 
 <% if logged_in? %>
@@ -9,33 +37,64 @@
     <%= render 'shared/stats' %>
   </div>
 
-  <button id="register">Workを登録する</button>
+  <h3>総勉強時間（年）</h3>
+  <h3>総勉強時間（月）</h3>
+  <h3>今月頑張った日（日にち、時間）</h3>
+  <h3>月の予定時間（時間、予定がない場合プロフィールで催促リンク）</h3>
+  <h3>何%の達成度</h3>
 
-  <% @works.each do |a| %>
-    <%= a.work_time %>
-  <% end %>
-  <%= link_to "前の月のリンク",root_url(month:@month.prev_month) %>
-  <%= link_to "次の月のリンク",root_url(month:@month.next_month) %>
+  <button id="register">Workを登録する</button>
 
 
   <div class="popup">
     <div class="content">
       <%= form_for(@work, url: works_path) do |f| %>
-        <%= f.label :work_time %>
+        <%= f.label :work_date %>
         <%= raw sprintf(
                   f.date_select(
-                    :work_time,
+                    :work_date,
                     use_month_numbers: true,
                     date_separator: '%s',
-                    default: { month: month, day: params[:month] ? 1 : Date.today.day }),
+                    default: { month: @today.month, day: @today.day }),
                   '年 ', '月 ') + '日' %>
+        <%= f.label :work_time_hour %>
+        <%= f.number_field(:work_time_hour, min: 0, max: 23) %>
+        <%= f.label :work_time_minute %>
+        <%= f.number_field(:work_time_minute, min: 0, max: 59) %>
 
-        <%#= f.datetime_select :work_time, class: 'form-control' %>
+        <%#= f.datetime_select :work_date, class: 'form-control' %>
         <%= f.submit "Post", class: "btn btn-primary" %>
       <% end %>
     </div>
     <button id="popup-close">閉じる</button>
   </div>
+
+  <div class="today"><%= @today %></div>
+
+  <% if @today_works.empty? %>
+    <div class="">今日のWorkはまだありません</div>
+  <% else %>
+    <% @today_works.each do |work| %>
+      <div><%= work.id %>
+      <%= work.work_date %></div>
+    <% end %>
+  <% end %>
+<!--  <div class="today_works"><%#= @today_works %></div>-->
+
+  <%= link_to "前の月のリンク",root_url(month:@month.prev_month) %>
+  <%= link_to "次の月のリンク",root_url(month:@month.next_month) %>
+
+
+  <div class="">月のWork</div>
+  <% @month_works.each do |work| %>
+    <div>
+      <%= work.id %>
+      <%= work.work_date %>
+      <%= work.work_time_hour %>
+      <%= work.work_time_minute %>
+    </div>
+  <% end %>
+  <%= works_list %>
 
   <div class="works-content">
     <% last_day.times do |day| %>
@@ -44,11 +103,15 @@
           <%= month %>/<%= day+1 %>
         </div>
         <div class="work">
+          <% if works_list[day+1] %>
+            <% hour, minute = total_time_day(works_list[day+1]) %>
+            <%= hour %>
+            <%= minute %>
+          <% end %>
         </div>
       </div>
     <% end %>
   </div>
-
 
 
 <% else %>

@@ -49,10 +49,12 @@ ActiveRecord::Schema.define(version: 20221221085010) do
   end
 
   create_table "works", force: :cascade do |t|
-    t.datetime "work_time"
+    t.date     "work_date"
+    t.integer  "work_time_hour"
+    t.integer  "work_time_minute"
     t.integer  "user_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
     t.index ["user_id"], name: "index_works_on_user_id"
   end
 

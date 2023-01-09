@@ -1,13 +1,14 @@
 class StaticPagesController < ApplicationController
   def home
     if logged_in?
-      @micropost = current_user.microposts.build
-      @feed_items = current_user.feed.paginate(page: params[:page])
       @work = Work.new
+      # 今日の日付を取得
+      @today = Date.today
+      # current_userの今日のデータを取得
+      @today_works = current_user.works.where(work_date: @today)
 
-
-      @month = params[:month] ? Date.parse(params[:month]) : Time.zone.today
-      @works = current_user.works.where(work_time: @month.all_month)
+      @month = params[:month] ? Date.parse(params[:month]) : Date.today
+      @month_works = current_user.works.where(work_date: @month.all_month)
     end
   end
 

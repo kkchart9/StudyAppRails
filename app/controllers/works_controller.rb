@@ -21,6 +21,6 @@ class WorksController < ApplicationController
   private
 
   def work_params
-    params.require(:work).permit(:work_time)
+    params.require(:work).permit(:work_time_hour, :work_time_minute, :work_date)
   end
 end
