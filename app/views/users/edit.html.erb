@@ -1,5 +1,5 @@
 <% provide(:button_text, "変更する") %>
-<h1>Update your profile</h1>
+<h1>プロフィールを変更する</h1>
 
 <div class="row">
   <div class="col-md-6 col-md-offset-3">
@@ -17,6 +17,10 @@
 
       <%= f.label :password_confirmation, "パスワードの確認" %>
       <%= f.password_field :password_confirmation, class: 'form-control' %>
+
+      <span class="picture">
+        <%= f.file_field :picture %>
+      </span>
 
       <%= f.submit yield(:button_text), class: "btn btn-primary" %>
     <% end %>

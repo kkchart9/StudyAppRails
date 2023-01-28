@@ -1,0 +1,59 @@
+<%
+  day_of_week = ["日", "月", "火", "水", "木", "金", "土"]
+
+  # 曜日の数字をテキストに変換
+  def get_day_of_week_text(day_of_week)
+    case day_of_week
+    when 0 then
+      return '日'
+    when 1 then
+      return '月'
+    when 2 then
+      return '火'
+    when 3 then
+      return '水'
+    when 4 then
+      return '木'
+    when 5 then
+      return '金'
+    when 6 then
+      return '土'
+    end
+  end
+
+  # 秒数をテキストに変換
+  def get_time_text(minute)
+    hour_tx = minute / 60
+    minute_tx = minute % 60
+    time_tx = hour_tx.to_s + ':' + minute_tx.to_s
+    return  time_tx
+  end
+
+%>
+
+<h3>こちらはplans.index</h3>
+
+<div class="content">
+  <%= form_for(@plan_post, url: plans_path) do |f| %>
+    <%= f.label :plan_day_of_week %>
+    <%= f.select :plan_day_of_week, day_of_week.map.with_index.to_h %>
+    <%= f.label :plan_time_hour %>
+    <%= f.number_field(:plan_time_hour, min: 0, max: 23) %>
+    <%= f.label :plan_time_minute %>
+    <%= f.number_field(:plan_time_minute, min: 0, max: 59) %>
+    <%= f.submit "Post", class: "btn btn-primary" %>
+  <% end %>
+</div>
+
+<% 7.times do |t| %>
+  <h3><%= get_day_of_week_text(t) %></h3>
+  <% if @plans[t] %>
+    <% if @plans[t].zero? %>
+      <p>この日の行動予定はありません。</p>
+    <% else %>
+      <p><%= get_time_text(@plans[t]) %></p>
+    <% end %>
+  <% else %>
+    <p>この日の行動予定はありません。</p>
+  <% end %>
+<% end %>

@@ -1,3 +1,25 @@
-// Place all the styles related to the Users controller here.
-// They will automatically be included in application.css.
-// You can use Sass (SCSS) here: http://sass-lang.com/
+.users {
+  display: flex;
+  flex-wrap: wrap;
+  li {
+    width: 240px;
+    display: flex;
+    height: 60px;
+    button {
+      height: 24px;
+      font-size: 12px;
+    }
+    .user-name {
+      width: 120px;
+    }
+  }
+  .user-picture {
+    width: 40px;
+    height: 40px;
+    margin-right: 8px;
+    img {
+      width: 40px;
+      height: 40px;
+    }
+  }
+}

@@ -1,16 +1,26 @@
-<h1>All users</h1>
+<h1>ユーザー</h1>
 
-<%= will_paginate %>
+<% if current_user.admin? %>
+  <p>あなたの権限は最高権限です。ユーザーの削除が行えます。</p>
+<% end %>
+<%= will_paginate :previous_label => ' < 前へ', :next_label => '次へ >' %>
 <ul class="users">
   <% @users.each do |user| %>
-    <li>
-      <%= link_to user.name, user %>
-      <% if current_user.admin? && !current_user?(user) %>
-        | <button><%= link_to "削除する", user, method: :delete,
-                      data: { confirm: "本当に削除しますか？" } %></button>
-      <% end %>
-    </li>
+    <% if user != current_user %>
+        <li>
+          <% if user.picture? %>
+            <%= link_to image_tag(user.picture.url), edit_user_path(current_user), class: "user-picture" %>
+          <% else %>
+            <a href=<%= user_path(user.id) %> class="user-picture"><image src="/assets/default.png" class="user_picture" alt="ユーザーアイコン"></image></a>
+          <% end %>
+
+          <div class="user-name"><%= link_to user.name, user %></div>
+          <% if current_user.admin? && !current_user?(user) %>
+            <button><%= link_to "削除", user, method: :delete,
+                          data: { confirm: "本当に削除しますか？" } %></button>
+          <% end %>
+        </li>
+    <% end %>
   <% end %>
 </ul>
-
-<%= will_paginate %>
+<%#= will_paginate, previous_label: '&lt 前へ', next_label: '次へ &gt' %>

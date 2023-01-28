@@ -3,45 +3,126 @@
   <%
     last_day = params[:month] ? Date.new(Date.parse(params[:month]).year, Date.parse(params[:month]).month, -1).day : Date.new(Date.today.year, Date.today.month, -1).day
     month = params[:month] ? Date.parse(params[:month]).month : Date.today.month
+    year = params[:month] ? Date.parse(params[:month]).year : Date.today.year
+    youbi = ['日', '月', '火', '水', '木', '金', '土']
 
-    works_list = {}
-    @month_works.each do |work|
-      work_time = work.work_time_hour.to_s + ":" + work.work_time_minute.to_s
+    worked_hard = 0
 
-      if works_list[work.work_date.day]
-        works_list[work.work_date.day].push(work_time)
-      else
-        works_list[work.work_date.day] = [work_time]
-      end
+    # 月で最大値の日と時間を取得
+    def get_month_time_max(total_day_works)
+      worked_hard_day, worked_hard_time = total_day_works.max{ |x, y| x[1] <=> y[1]}
+      return worked_hard_day, worked_hard_time
     end
 
-    # 日にちごとの総Work時間を取得
-    def total_time_day(works_time_list)
-      hour = 0
-      minute = 0
-      works_time_list.each do |time|
-        hour_tmp, minute_tmp = time.split(":")
-        hour += hour_tmp.to_i
-        minute += minute_tmp.to_i
-        if minute >= 60
-          hour += 1
-          minute = 60 - minute
+    if !@total_day_works.empty?
+      worked_hard_day, worked_hard_time = get_month_time_max(@total_day_works)
+      worked_hard = worked_hard_time
+    end
+
+    # 分数をテキストに変換
+    def get_time_text(minute)
+      hour_tx = (minute / 60).to_s
+      minute_tx = (minute % 60).to_s
+      if hour_tx.length == 1
+        hour_tx = "0" + hour_tx
+      end
+      if minute_tx.length == 1
+        minute_tx = "0" + minute_tx
+      end
+      time_tx = hour_tx + ':' + minute_tx
+      return  time_tx
+    end
+
+    # 分数を時間分のテキストに変換
+    def get_time_ja_text(minute)
+      hour_tx = (minute/60).to_s
+      minute_tx = (minute%60).to_s
+      if minute_tx.length == 1
+        minute_tx = "0" + minute_tx
+      end
+      time_tx = hour_tx + "時間" + minute_tx + "分"
+      return time_tx
+    end
+
+    # 棒グラフ可変値
+    def get_bar_graph_val(time = 0, plans, day_of_week)
+      ans = 0
+      if time.nil?
+        return ans
+      end
+
+      if plans[day_of_week]
+        ans = 400 * time / plans[day_of_week]
+      else
+        if time
+          ans = 400
+        else
+          ans = 0
         end
       end
 
-      return hour.to_s, minute.to_s
+      if ans > 400
+        ans = 400
+      end
+
+      return ans
     end
+
+    def get_total_time_per(plan, time, day)
+      ans = 0
+      if time.nil?
+        return ans
+      end
+
+      ans = time.to_f / plan * 100
+      return sprintf("%.f", ans)
+    end
+
   %>
   <div class="row">
     <%= render 'shared/user_info' %>
     <%= render 'shared/stats' %>
   </div>
+<!--  <div class="">@month_works <%#= @month_works %></div>-->
+  <div class="">@works_list <%= @works_list %></div>
+  <div class="">@total_month_time <%= @total_month_time %></div>
+  <div class="">@total_day_works <%= @total_day_works %></div>
+  <div class="">@plans<%= @plans %></div>
 
-  <h3>総勉強時間（年）</h3>
-  <h3>総勉強時間（月）</h3>
-  <h3>今月頑張った日（日にち、時間）</h3>
-  <h3>月の予定時間（時間、予定がない場合プロフィールで催促リンク）</h3>
-  <h3>何%の達成度</h3>
+
+
+
+
+  <h3>総行動時間（月）<span><%= get_time_ja_text(@total_month_time) %></span></h3>
+  <h3>今月頑張った日（日にち、時間）
+    <% if !@total_day_works.empty? %>
+      <% worked_hard_day, worked_hard_time = get_month_time_max(@total_day_works) %>
+      <%= worked_hard_day %>日
+      <%= get_time_ja_text(worked_hard_time) %>
+    <% else %>
+      <div class="">今月はまだ何も行っていません。</div>
+    <% end %>
+  </h3>
+  <h3>1日の予定行動時間</h3>
+  <table class="table">
+    <thead>
+    <tr>
+      <% 7.times do |t| %>
+        <th scope="col"><%= youbi[t] %></th>
+      <% end %>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <% 7.times do |t| %>
+        <% if @plans[t] %>
+          <th scope="col"><%= get_time_text(@plans[t]) %></th>
+        <% else %>
+          <th scope="col">00:00</th>
+        <% end %>
+      <% end %>
+    </tr>
+  </table>
 
   <button id="register">Workを登録する</button>
 
@@ -69,46 +150,79 @@
     <button id="popup-close">閉じる</button>
   </div>
 
-  <div class="today"><%= @today %></div>
-
   <% if @today_works.empty? %>
     <div class="">今日のWorkはまだありません</div>
-  <% else %>
-    <% @today_works.each do |work| %>
-      <div><%= work.id %>
-      <%= work.work_date %></div>
-    <% end %>
   <% end %>
-<!--  <div class="today_works"><%#= @today_works %></div>-->
 
-  <%= link_to "前の月のリンク",root_url(month:@month.prev_month) %>
-  <%= link_to "次の月のリンク",root_url(month:@month.next_month) %>
-
-
-  <div class="">月のWork</div>
-  <% @month_works.each do |work| %>
-    <div>
-      <%= work.id %>
-      <%= work.work_date %>
-      <%= work.work_time_hour %>
-      <%= work.work_time_minute %>
-    </div>
-  <% end %>
-  <%= works_list %>
+  <li class="month-display">
+    <ul><%= link_to "<< " + @month.prev_month.month.to_s + "月",root_url(month:@month.prev_month) %></ul>
+    <ul class="middle"><%= @month.month %>月</ul>
+    <ul><%= link_to @month.next_month.month.to_s + "月 >>",root_url(month:@month.next_month) %></ul>
+  </li>
 
   <div class="works-content">
+    <div class="works">
+      <div class="date">日付</div>
+      <div class="work-title">習慣達成度（クリックすると詳細が見れます。）</div>
+      <div class="work-achievement-title">パーセント</div>
+    </div>
     <% last_day.times do |day| %>
-      <div class="works">
+      <div class="works" value="<%= day+1 %>">
         <div class="date">
-          <%= month %>/<%= day+1 %>
+          <%= day+1 %>(<%= youbi[Date.new(year, month, day+1).wday] %>)
         </div>
         <div class="work">
-          <% if works_list[day+1] %>
-            <% hour, minute = total_time_day(works_list[day+1]) %>
-            <%= hour %>
-            <%= minute %>
+          <% if @total_day_works[day+1] %>
+            <%#= get_time_text(@total_day_works[day+1]) %>
+          <% end %>
+          <div class="work-bar" style="width: <%= get_bar_graph_val(@total_day_works[day+1], @plans, Date.new(year, month, day+1).wday) %>px;">
+          </div>
+        </div>
+        <div class="work-achievement">
+          <% if @plans[Date.new(year, month, day+1).wday] %>
+            <%= link_to get_total_time_per(@plans[Date.new(year, month, day+1).wday], @total_day_works[day+1], day+1).to_s + "%", plans_path%>
+            <%#= get_total_time_per(@plans[Date.new(year, month, day+1).wday], @total_day_works[day+1]) %>
+          <% else %>
+            <% if @total_day_works[day+1] %>
+              <%= link_to @total_day_works[day+1].to_s + "%", plans_path %>
+            <% else %>
+              <%= link_to "0%", plans_path %>
+            <% end %>
+          <% end %>
+
+        </div>
+
+      </div>
+      <div class="work-detail-<%= day+1 %> works-detail">
+        <div class="details">
+<!--          <h4><%#= @month.month %>/<%#= day+1 %></h4>-->
+          <% if @works_list[day+1] %>
+            <% if @plans[Date.new(year, month, day+1).wday] %>
+              <h5 class="plan-time">予定時間<span><%= get_time_ja_text(@plans[Date.new(year, month, day+1).wday]) %></span></h5>
+            <% else %>
+              <h5 class="plan-time">予定時間<span>0時間00分</span></h5>
+          <% end %>
+            <h5 class="sum-time">合計時間<span><%= get_time_ja_text(@total_day_works[day+1]) %></span></h5>
+            <div class="detail-time">
+              <h5>詳細時間</h5>
+              <ul>
+                <% @works_list[day+1].each_with_index do |time, ind| %>
+                  <li><span class="index"><%= ind+1 %>.</span><%= get_time_ja_text(time) %></li>
+                <% end %>
+              </ul>
+            </div>
+
+            <%#= @works_list[day+1] %>
+          <% else %>
+            <% if @plans[Date.new(year, month, day+1).wday] %>
+              <h5 class="plan-time">予定時間<span><%= get_time_ja_text(@plans[Date.new(year, month, day+1).wday]) %></span></h5>
+            <% else %>
+              <h5 class="plan-time">予定時間<span>0時間00分</span></h5>
+            <% end %>
+            <p>この日の行動は何もありません。</p>
           <% end %>
         </div>
+
       </div>
     <% end %>
   </div>
@@ -117,7 +231,7 @@
 <% else %>
   <div class="center jumbotron">
     <h1>WORK CHART<span>へようこそ！</span></h1>
-    <li>
+    <li class="register-btn">
       <%= link_to "ログイン", login_path %>
       <%= link_to "新規登録", signup_path %>
     </li>
@@ -131,5 +245,17 @@
 
     $('#popup-close').on('click', function () {
         $('.popup').fadeOut();
+    });
+
+    $('.works').on('click', function () {
+        const val = $(this).attr("value");
+        let state = $(".work-detail-" + val).css("display");
+
+        if (state == "none") {
+            $(".work-detail-" + val).css("display", "block");
+        } else {
+            $(".work-detail-" + val).css("display", "none");
+        }
+
     });
 </script>

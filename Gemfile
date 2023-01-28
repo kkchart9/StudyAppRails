@@ -27,6 +27,7 @@ gem 'net-imap'
 gem 'net-pop'
 gem 'net-smtp'
 gem 'dotenv-rails'
+gem 'font-awesome-sass'
 
 group :development, :test do
   gem 'sqlite3', '1.3.13'

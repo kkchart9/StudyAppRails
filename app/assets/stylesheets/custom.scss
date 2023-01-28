@@ -232,19 +232,78 @@ span.picture {
     height: 40px;
     border-bottom: 1px solid #eaeaea;
     display: flex;
+    justify-content: space-around;
     .date {
       font-size: 24px;
       width: 64px;
+      text-align: right;
     }
     .work {
+      width: 400px;
       height: 100%;
+    }
+    .work-title {
+      text-align: center;
+      padding-top: 10px;
+    }
+    .work-bar {
+      height: 80%;
+      margin-top: 4px;
+      border: 1px solid #999999;
+      border-radius: 4px;
+      background-color: #CCCCCC;
+    }
+    .work-achievement-title {
+      padding-top: 10px;
+    }
+    .work-achievement {
+      width: 72px;
+    }
+  }
+  .works-detail {
+    display: none;
+    .details {
+      width: 400px;
+      margin: auto;
+      .sum-time {
+        font-size: 24px;
+        text-align: center;
+        span {
+          margin-left: 40px;
+        }
+      }
+      .plan-time {
+        font-size: 24px;
+        text-align: center;
+        span {
+          margin-left: 40px;
+        }
+      }
+      .detail-time {
+        display: flex;
+        justify-content: center;
+        h5 {
+          margin-left: 8px;
+          margin-top: 4px;
+        }
+        ul {
+          li {
+            .index {
+              display: inline-block;
+              width: 24px;
+              text-align: right;
+              margin-right: 8px;
+            }
+          }
+        }
+      }
     }
   }
 }
 
 .popup {
   display: none;
-  position: fixed;
+  //position: fixed;
   background-color: #F7F7F7;
   margin-left: 32px;
   height: 320px;
@@ -259,8 +318,15 @@ span.picture {
 /* user_info */
 .user_info {
   margin: auto;
+  text-align: center;
+  margin-top: 32px;
   h1 {
     font-size: 40px;
+  }
+  .user_picture {
+    height: 120px;
+    width: 120px;
+    border-radius: 50%;
   }
 }
 

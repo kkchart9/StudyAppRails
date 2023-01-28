@@ -1,23 +1,68 @@
+<%
+  youbi = ['日', '月', '火', '水', '木', '金', '土']
+
+  # 秒数をテキストに変換
+  def get_time_text(minute)
+    hour_tx = (minute / 60).to_s
+    minute_tx = (minute % 60).to_s
+    if hour_tx.length == 1
+      hour_tx = "0" + hour_tx
+    end
+    if minute_tx.length == 1
+      minute_tx = "0" + minute_tx
+    end
+    time_tx = hour_tx + ':' + minute_tx
+    return  time_tx
+  end
+%>
+
+
 <div class="row">
   <aside class="col-md-4">
     <section class="user_info">
-      <h1>
-        <%= @user.name %>
-        <%= @user.email %>
-      </h1>
+      <% if @user.picture? %>
+        <%= link_to image_tag(@user.picture.url), edit_user_path(current_user), class: "user_picture" %>
+      <% else %>
+        <image src="/assets/default.png" class="user_picture" alt="ユーザーアイコン"></image>
+      <% end %>
+      <h1><%= @user.name %></h1>
     </section>
     <section class="stats">
       <%= render 'shared/stats' %>
     </section>
   </aside>
   <div class="col-md-8">
+    <h3>1日の予定行動時間</h3>
+    <div class="plans-table">
+      <table class="table">
+        <thead>
+        <tr>
+          <% 7.times do |t| %>
+            <th scope="col"><%= youbi[t] %></th>
+          <% end %>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <% 7.times do |t| %>
+            <% if @plans[t] %>
+              <th scope="col"><%= get_time_text(@plans[t]) %></th>
+            <% else %>
+              <th scope="col">00:00</th>
+            <% end %>
+          <% end %>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div class="col-md-8">
     <%= render 'follow_form' if logged_in? %>
     <% if @user.microposts.any? %>
-      <h3>Microposts (<%= @user.microposts.count %>)</h3>
+      <h3>投稿 (<%= @user.microposts.count %>)</h3>
       <ol class="microposts">
         <%= render @microposts %>
       </ol>
-      <%= will_paginate @microposts %>
+      <%= will_paginate @microposts, :previous_label => ' < 前へ', :next_label => '次へ >' %>
     <% end %>
   </div>
 </div>

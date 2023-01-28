@@ -10,6 +10,7 @@ class UsersController < ApplicationController
   def show
     @user = User.find(params[:id])
     @microposts = @user.microposts.paginate(page: params[:page])
+    @plans = get_plan_week(Plan.where(user_id: params[:id]))
     redirect_to root_url and return unless @user.activated?
   end
 
@@ -66,7 +67,7 @@ class UsersController < ApplicationController
   private
 
   def user_params
-    params.require(:user).permit(:name, :email, :password, :password_confirmation)
+    params.require(:user).permit(:name, :email, :password, :password_confirmation, :picture)
   end
 
   # 正しいユーザーかどうか確認
@@ -78,5 +79,16 @@ class UsersController < ApplicationController
   # 管理者かどうか判断
   def admin_user
     redirect_to(root_url) unless current_user.admin?
+  end
+
+  def get_plan_week(plans)
+    plan_week = {}
+    plans.each do |plan|
+      key = plan[:plan_day_of_week]
+      val = (plan[:plan_time_hour]*60) + plan[:plan_time_minute]
+      plan_week[key] = val
+    end
+
+    return plan_week
   end
 end
