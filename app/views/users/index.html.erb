@@ -8,8 +8,7 @@
   <% @users.each do |user| %>
     <% if user != current_user %>
         <li>
-          <a href=<%= user_path(user.id) %> class="user-picture"><image src="/assets/default.png" class="user_picture" alt="ユーザーアイコン"></image></a>
-
+          <%= link_to image_tag("default.png", alt: "ユーザーアイコン", class: "user-picture") %>
           <div class="user-name"><%= link_to user.name, user %></div>
           <% if current_user.admin? && !current_user?(user) %>
             <button><%= link_to "削除", user, method: :delete,

@@ -5,6 +5,14 @@
     width: 240px;
     display: flex;
     height: 60px;
+    a {
+      height: 44px;
+      margin-right: 8px;
+      .user-picture {
+        width: 40px;
+        height: 40px;
+      }
+    }
     button {
       height: 24px;
       font-size: 12px;
@@ -13,13 +21,5 @@
       width: 120px;
     }
   }
-  .user-picture {
-    width: 40px;
-    height: 40px;
-    margin-right: 8px;
-    img {
-      width: 40px;
-      height: 40px;
-    }
-  }
+
 }
