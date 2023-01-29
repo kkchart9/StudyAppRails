@@ -8,11 +8,7 @@
   <% @users.each do |user| %>
     <% if user != current_user %>
         <li>
-          <% if user.picture? %>
-            <%= link_to image_tag(user.picture.url), edit_user_path(current_user), class: "user-picture" %>
-          <% else %>
-            <a href=<%= user_path(user.id) %> class="user-picture"><image src="/assets/default.png" class="user_picture" alt="ユーザーアイコン"></image></a>
-          <% end %>
+          <a href=<%= user_path(user.id) %> class="user-picture"><image src="/assets/default.png" class="user_picture" alt="ユーザーアイコン"></image></a>
 
           <div class="user-name"><%= link_to user.name, user %></div>
           <% if current_user.admin? && !current_user?(user) %>

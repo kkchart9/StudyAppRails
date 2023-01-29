@@ -20,11 +20,8 @@
 <div class="row">
   <aside class="col-md-4">
     <section class="user_info">
-      <% if @user.picture? %>
-        <%= link_to image_tag(@user.picture.url), edit_user_path(current_user), class: "user_picture" %>
-      <% else %>
-        <image src="/assets/default.png" class="user_picture" alt="ユーザーアイコン"></image>
-      <% end %>
+      <image src="/assets/default.png" class="user_picture" alt="ユーザーアイコン"></image>
+
       <h1><%= @user.name %></h1>
     </section>
     <section class="stats">
