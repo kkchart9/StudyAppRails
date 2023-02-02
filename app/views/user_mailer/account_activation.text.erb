@@ -1,5 +1,7 @@
-Hi <%= @user.name %>,
+<%= @user.name %>さん、ようこそWORK CHARTへ
 
-Welcome to the Sample App! Click on the link below to activate your account:
+日々の予定を登録し、習慣をつけていきましょう！
+
+下記のURLをクリックするとあなたのアカウントが有効化になり、サービスを使えるようになります。
 
 <%= edit_account_activation_url(@user.activation_token, email: @user.email) %>

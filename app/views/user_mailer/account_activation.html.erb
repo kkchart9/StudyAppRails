@@ -1,9 +1,13 @@
-<h1>Sample App</h1>
+<h1>WORK CHART</h1>
 
-<p>Hi <%= @user.name %>,</p>
+<p><%= @user.name %>さん、ようこそWORK CHARTへ</p>
 
 <p>
-  Welcome to the Sample App! Click on the link below to activate your account:
+  日々の予定を登録し、習慣をつけていきましょう！
+</p>
+
+<p>
+  下記のURLをクリックするとあなたのアカウントが有効化になり、サービスを使えるようになります。
 </p>
 
 <%= link_to "Activate", edit_account_activation_url(@user.activation_token,
