@@ -1,5 +1,6 @@
 class WorksController < ApplicationController
-  before_action :logged_in_user, only: [:create]
+  before_action :logged_in_user, only: [:create, :destroy]
+  before_action :correct_user, only: :destroy
 
   def index
     # クエリストリングがあればTimeオブジェクトに変換、ない場合は現在の時刻を取得
@@ -17,20 +18,22 @@ class WorksController < ApplicationController
     content_tx = get_content_text(@work[:work_date], work_time, @plans, @day_of_week, @day_works)
     @microposts = current_user.microposts.build(content: content_tx)
 
-
-    # if @plans[@day_of_week]
-    #
-    # end
-    p "============"
-    p @plans, @day_of_week, @day_works
-
-    if @work.save and @microposts.save
+    if @work[:work_time_hour] == 0 and @work[:work_time_minute] == 0
+      flash[:info] = "登録に失敗しました。もう一度、入力をお確かめの上ご登録お願いします。"
+      redirect_to root_url
+    elsif @work.save and @microposts.save
       flash[:info] = "登録しました。"
       redirect_to root_url
     else
       flash[:danger] = "登録に失敗しました。もう一度、入力をお確かめの上ご登録お願いします。"
       redirect_to root_url
     end
+  end
+
+  def destroy
+    @work.destroy
+    flash[:success] = '削除しました。'
+    redirect_to request.referrer || root_url
   end
 
   private
@@ -75,14 +78,16 @@ class WorksController < ApplicationController
   end
 
   def get_content_text(date, time, plans, day_of_week, day_works)
-    p "===================="
-    p get_content_plans_work(plans, day_of_week)
     plan_time = get_content_plans_work(plans, day_of_week)
     day_works += time
-    plan_per = day_works.to_f/plan_time * 100
-    plan_per = sprintf("%.f", plan_per)
+    if plan_time == 0
+      text = date.year.to_s + '/' + date.month.to_s + "/" + date.day.to_s + "に、" + get_time_ja_text(time) + "行動しました。\n本日の行動予定は" + get_time_ja_text(plan_time) + "です。\n"
+    else
+      plan_per = day_works.to_f/plan_time * 100
+      plan_per = sprintf("%.f", plan_per)
+      text = date.year.to_s + '/' + date.month.to_s + "/" + date.day.to_s + "に、" + get_time_ja_text(time) + "行動しました。\n本日の行動予定は" + get_time_ja_text(plan_time) + "です。\n" + plan_per + "％の達成度です。"
+    end
 
-    text = date.year.to_s + '/' + date.month.to_s + "/" + date.day.to_s + "に、" + get_time_ja_text(time) + "行動しました。\n本日の行動予定は" + get_time_ja_text(plan_time) + "です。\n" + plan_per + "％の達成度です。"
     return text
   end
 
@@ -108,5 +113,10 @@ class WorksController < ApplicationController
     end
 
     return total_time
+  end
+
+  def correct_user
+    @work = current_user.works.find_by(id: params[:id])
+    redirect_to root_url if @work.nil?
   end
 end

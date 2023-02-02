@@ -2,9 +2,14 @@
   <div class="container">
     <%= link_to "WORK CHART", root_url, id: "logo" %>
     <nav>
-      <ul class="nav navbar-nav navbar-right">
+      <ul class="nav navbar-nav navbar-right menu">
+<!--        レスポンシブの三本線のためdivは消さない-->
+        <div></div>
+        <div></div>
+        <div></div>
         <li><%= link_to "ホーム", root_path %></li>
         <% if logged_in? %>
+          <li><%= link_to "プラン", plans_path %></li>
           <li><%= link_to "ユーザー", users_path %></li>
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">

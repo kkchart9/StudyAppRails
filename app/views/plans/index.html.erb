@@ -1,5 +1,5 @@
 <%
-  day_of_week = ["日", "月", "火", "水", "木", "金", "土"]
+  youbi = ["日", "月", "火", "水", "木", "金", "土"]
 
   # 曜日の数字をテキストに変換
   def get_day_of_week_text(day_of_week)
@@ -29,31 +29,82 @@
     return  time_tx
   end
 
+  # 分数を時間分のテキストに変換
+  def get_time_ja_text(minute)
+    hour_tx = (minute/60).to_s
+    minute_tx = (minute%60).to_s
+    if minute_tx.length == 1
+      minute_tx = "0" + minute_tx
+    end
+    time_tx = hour_tx + "時間" + minute_tx + "分"
+    return time_tx
+  end
+
 %>
 
-<h3>こちらはplans.index</h3>
+<!--<div class="content">-->
+  <%#= form_for(@plan_post, url: plans_path) do |f| %>
+    <%#= f.label :plan_day_of_week %>
+    <%#= f.select :plan_day_of_week, youbi.map.with_index.to_h %>
+    <%#= f.label :plan_time_hour %>
+    <%#= f.number_field(:plan_time_hour, min: 0, max: 23) %>
+    <%#= f.label :plan_time_minute %>
+    <%#= f.number_field(:plan_time_minute, min: 0, max: 59) %>
+    <%#= f.submit "Post", class: "btn btn-primary" %>
+  <%# end %>
+<!--</div>-->
 
-<div class="content">
-  <%= form_for(@plan_post, url: plans_path) do |f| %>
-    <%= f.label :plan_day_of_week %>
-    <%= f.select :plan_day_of_week, day_of_week.map.with_index.to_h %>
-    <%= f.label :plan_time_hour %>
-    <%= f.number_field(:plan_time_hour, min: 0, max: 23) %>
-    <%= f.label :plan_time_minute %>
-    <%= f.number_field(:plan_time_minute, min: 0, max: 59) %>
-    <%= f.submit "Post", class: "btn btn-primary" %>
-  <% end %>
+<div class="plan-popup">
+  <div class="popup-background popup-close"></div>
+  <div class="popup-content">
+    <h4 class="popup-title">予定時間を登録する</h4>
+
+    <%= form_for(@plan_post, url: plans_path) do |f| %>
+      <div class="popup-register">
+        <div class="popup-youbi">
+          <%= f.select :plan_day_of_week, youbi.map.with_index.to_h %>曜日
+        </div>
+        <div class="popup-time">
+          <%= f.select(:plan_time_hour, [*0..23]) %>時間
+          <%= f.select(:plan_time_minute, [*0..59]) %>分
+        </div>
+      </div>
+      <div class="popup-btn">
+        <%= f.submit "登録", class: "btn-primary popup-submit" %>
+        <div class="popup-close">閉じる</div>
+      </div>
+
+    <% end %>
+  </div>
 </div>
 
+
+<div class="plan-header">
+  <h3 class="plan-title">1日の予定行動時間</h3>
+  <button id="plan-register" class="button">予定時間を登録する</button>
+</div>
 <% 7.times do |t| %>
-  <h3><%= get_day_of_week_text(t) %></h3>
-  <% if @plans[t] %>
-    <% if @plans[t].zero? %>
-      <p>この日の行動予定はありません。</p>
+  <div class="plan">
+    <h3><%= get_day_of_week_text(t) %></h3>
+    <% if @plans[t] %>
+      <% if @plans[t].zero? %>
+        <p>この日の行動予定はありません。</p>
+      <% else %>
+        <p><%= get_time_ja_text(@plans[t]) %></p>
+      <% end %>
     <% else %>
-      <p><%= get_time_text(@plans[t]) %></p>
+      <p>この日の行動予定はありません。</p>
     <% end %>
-  <% else %>
-    <p>この日の行動予定はありません。</p>
-  <% end %>
+  </div>
+
 <% end %>
+
+<script type="text/javascript" charset="utf-8">
+    $('#plan-register').on('click', function () {
+        $('.plan-popup').fadeIn();
+    });
+
+    $('.popup-close').on('click', function () {
+        $('.plan-popup').fadeOut();
+    });
+</script>

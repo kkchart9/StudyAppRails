@@ -16,10 +16,40 @@
     button {
       height: 24px;
       font-size: 12px;
+      a {
+        display: inline;
+        margin: 0;
+      }
     }
     .user-name {
       width: 120px;
+      a {
+        display: inline;
+      }
     }
   }
+}
 
+.follow-users {
+  display: flex;
+  li {
+    height: 24px;
+    margin-bottom: 4px;
+    div {
+      width: 200px;
+      a {
+        height: 20px;
+        font-size: 16px;
+      }
+    }
+
+  }
+}
+.follow-paginate {
+  text-align: center;
+}
+.user_info {
+  h4 {
+    text-align: center;
+  }
 }

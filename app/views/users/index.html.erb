@@ -1,7 +1,7 @@
 <h1>ユーザー</h1>
 
 <% if current_user.admin? %>
-  <p>あなたの権限は最高権限です。ユーザーの削除が行えます。</p>
+  <p style="color: #ff1e1e;">あなたの権限は最高権限です。ユーザーの削除が行えます。</p>
 <% end %>
 <%= will_paginate :previous_label => ' < 前へ', :next_label => '次へ >' %>
 <ul class="users">

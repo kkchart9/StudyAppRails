@@ -3,7 +3,6 @@ class PlansController < ApplicationController
 
   def index
     @plan_post  = Plan.new
-
     @plans = get_plan_week(current_user.plans)
 
   end

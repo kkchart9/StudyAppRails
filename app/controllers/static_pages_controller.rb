@@ -35,11 +35,13 @@ class StaticPagesController < ApplicationController
       # work_time = work.work_time_hour.to_s + ":" + work.work_time_minute.to_s
 
       if works_list[work.work_date.day]
-        works_list[work.work_date.day].push(work_time)
+        works_list[work.work_date.day].push([work[:id], work_time])
       else
-        works_list[work.work_date.day] = [work_time]
+        works_list[work.work_date.day] = [[work[:id], work_time]]
       end
     end
+    p "==========="
+    p works_list
     return works_list
   end
 
@@ -82,7 +84,7 @@ class StaticPagesController < ApplicationController
       val = work_times[1]
       minute = 0
       val.each do |time|
-        minute += time.to_i
+        minute += time[1].to_i
       end
       total_works_list[key] = minute
     end
