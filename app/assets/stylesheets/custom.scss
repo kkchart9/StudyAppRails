@@ -230,6 +230,11 @@ span.picture {
   .row {
     margin-bottom: 24px;
   }
+  h3 {
+    span {
+      font-weight: bold;
+    }
+  }
   .plan-title {
     margin-top: 48px;
   }
@@ -237,6 +242,7 @@ span.picture {
     margin-top: 32px;
     display: flex;
     justify-content: center;
+    font-weight: bold;
     .today-time {
       font-size: 22px;
       display: inline;
@@ -254,13 +260,15 @@ span.picture {
       padding-left: 16px;
     }
   }
-  #work-register {
-    position: absolute;
-    left: 45%;
-    margin-top: 12px;
-    height: 28px;
-    width: 180px;
+  .work-register {
+    text-align: center;
+    button {
+      margin-top: 12px;
+      height: 28px;
+      width: 180px;
+    }
   }
+
   .month-display {
     margin-top: 48px;
   }
@@ -468,52 +476,6 @@ span.picture {
   }
 }
 
-
-/// レスポンシブデザイン
-
-
-@media screen and (max-width: 959px) {
-  /* 959px以下に適用されるCSS（タブレット用） */
-  header {
-    width: max;
-  }
-}
-@media screen and (max-width: 480px) {
-  /* 480px以下に適用されるCSS（スマホ用） */
-  .menu {
-    position: relative;
-    height: 46px;
-    width: 46px;
-    display: inline-block;
-    box-sizing: border-box;
-    background-color: #fff;
-    border: 2px solid #2E2F30;
-    border-radius: 4px;
-    .menu div {
-      position: absolute;
-      left: 7px;
-      height: 2px;
-      width: 28px;
-      background-color: #444;
-      border-radius: 2px;
-      display: inline-block;
-      box-sizing: border-box;
-    }
-    .menu div:nth-child(1) {
-      top: 10px;
-    }
-    .menu div:nth-child(2) {
-      bottom: 20px;
-    }
-    .menu div:nth-child(3) {
-      bottom: 10px;
-    }
-    li {
-      display: none;
-    }
-  }
-}
-
 .today-work-no {
   margin-top: 10px;
   font-size: 20px;
@@ -528,3 +490,124 @@ span.picture {
     padding-top: 2px;
   }
 }
+
+
+/// レスポンシブデザイン
+
+
+@media screen and (max-width: 959px) {
+  /* 959px以下に適用されるCSS（タブレット用） */
+  .follow-title {
+    padding-left: 50px;
+  }
+  .follow-users {
+    .users {
+      justify-content: center;
+      li {
+        margin-right: 24px;
+      }
+    }
+  }
+}
+@media screen and (max-width: 480px) {
+  .container {
+    width: 345px;
+  }
+  table {
+    font-size: 12px;
+  }
+  .home {
+    .works-detail {
+      .details {
+        width: 315px;
+      }
+    }
+    h3 {
+      font-size: 20px;
+      span {
+        font-weight: bold;
+        margin-left: 12px;
+      }
+    }
+    .worked-hard {
+      height: 52px;
+      span {
+        display: block;
+        margin-top: 12px;
+        margin-left: 0;
+      }
+    }
+    .plan-title {
+      margin-top: 24px;
+    }
+  }
+
+  .menu-box {
+    height: 50px;
+    width: 50px;
+    float: right;
+    div:nth-child(1) {
+      background-color: #999999;
+      height: 4px;
+      width: 40px;
+      margin: auto;
+      margin-top: 10px;
+      border-radius: 5px;
+    }
+    div:nth-child(2) {
+      background-color: #999999;
+      height: 4px;
+      width: 40px;
+      margin: auto;
+      margin-top: 10.5px;
+      border-radius: 5px;
+    }
+    div:nth-child(3) {
+      background-color: #999999;
+      height: 4px;
+      width: 40px;
+      margin: auto;
+      margin-top: 11px;
+      border-radius: 5px;
+    }
+  }
+
+  .menu {
+    display: none;
+  }
+
+  .works-content {
+    .works {
+      .work-title {
+        width: 180px;
+        padding: 0;
+        span {
+          display: block;
+          font-size: 8px;
+        }
+      }
+      .date {
+        font-size: 20px;
+      }
+      .work {
+        width: 180px;
+      }
+      .work-achievement {
+        width: 48px;
+      }
+    }
+  }
+
+  .follow-title {
+    text-align: center;
+    padding: 0;
+  }
+  .follow-users {
+    .users {
+      justify-content: center;
+      margin-left: 24px;
+    }
+  }
+}
+
+

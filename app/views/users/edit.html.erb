@@ -18,10 +18,6 @@
       <%= f.label :password_confirmation, "パスワードの確認" %>
       <%= f.password_field :password_confirmation, class: 'form-control' %>
 
-      <span class="picture">
-        <%= f.file_field :picture %>
-      </span>
-
       <%= f.submit yield(:button_text), class: "btn btn-primary" %>
     <% end %>
   </div>

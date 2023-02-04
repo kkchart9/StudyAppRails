@@ -82,8 +82,31 @@
       return sprintf("%.f", ans)
     end
 
+    def get_bar_graph_per(time = 0, plans, day_of_week)
+      ans = 0
+      if time == 0
+        return ans
+      end
+
+      if plans[day_of_week] == 0
+        ans == 100
+        return ans
+      end
+
+      if plans[day_of_week]
+        ans = time.to_f / plans[day_of_week] * 100
+
+        if ans > 100
+          ans = 100
+        end
+      end
+      return sprintf("%.f", ans)
+    end
+
+
+
   %>
-  <div class="home">
+  <div class="home" xmlns="http://www.w3.org/1999/html">
     <div class="row">
       <%= render 'shared/user_info' %>
       <%= render 'shared/stats' %>
@@ -96,11 +119,13 @@
     <!--  <div class="">@today_works<%#= @today_works %></div>-->
 
     <h3>総行動時間（月）<span><%= get_time_ja_text(@total_month_time) %></span></h3>
-    <h3>今月頑張った日（日にち、時間）
+    <h3 class="worked-hard">今月頑張った日（日にち、時間）
       <% if !@total_day_works.empty? %>
-        <% worked_hard_day, worked_hard_time = get_month_time_max(@total_day_works) %>
-        <%= worked_hard_day %>日
-        <%= get_time_ja_text(worked_hard_time) %>
+        <span>
+          <% worked_hard_day, worked_hard_time = get_month_time_max(@total_day_works) %>
+          <%= worked_hard_day %>日
+          <%= get_time_ja_text(worked_hard_time) %>
+        </span>
       <% else %>
         <div class="today-work-no">今月はまだ何も行っていません。</div>
       <% end %>
@@ -140,8 +165,9 @@
       <% end %>
     </div>
 
-    <button id="work-register" class="button">行動時間を登録する</button>
-
+    <div class="work-register">
+      <button id="work-register" class="button">行動時間を登録する</button>
+    </div>
 
 
     <div class="popup">
@@ -186,7 +212,7 @@
     <div class="works-content">
       <div class="works">
         <div class="date">日付</div>
-        <div class="work-title">習慣達成度（クリックすると詳細が見れます。）</div>
+        <div class="work-title">習慣達成度<span>（クリックすると詳細が見れます。）</span></div>
         <div class="work-achievement-title">パーセント</div>
       </div>
       <% last_day.times do |day| %>
@@ -195,10 +221,7 @@
             <%= day+1 %>(<%= youbi[Date.new(year, month, day+1).wday] %>)
           </div>
           <div class="work">
-            <% if @total_day_works[day+1] %>
-              <%#= get_time_text(@total_day_works[day+1]) %>
-            <% end %>
-            <div class="work-bar" style="width: <%= get_bar_graph_val(@total_day_works[day+1], @plans, Date.new(year, month, day+1).wday) %>px;">
+            <div class="work-bar" style="width: <%= get_bar_graph_per(@total_day_works[day+1], @plans, Date.new(year, month, day+1).wday) %>%;">
             </div>
           </div>
           <div class="work-achievement">

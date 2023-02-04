@@ -2,11 +2,13 @@
   <div class="container">
     <%= link_to "WORK CHART", root_url, id: "logo" %>
     <nav>
+      <!-- レスポンシブの三本線のためdivは消さない -->
+      <div class="menu-box">
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
       <ul class="nav navbar-nav navbar-right menu">
-<!--        レスポンシブの三本線のためdivは消さない-->
-        <div></div>
-        <div></div>
-        <div></div>
         <li><%= link_to "ホーム", root_path %></li>
         <% if logged_in? %>
           <li><%= link_to "プラン", plans_path %></li>
@@ -29,3 +31,10 @@
     </nav>
   </div>
 </header>
+
+<script type="text/javascript" charset="utf-8">
+    $('.menu-box').on('click', function () {
+        $(".menu").css("display", "block");
+    });
+
+</script>

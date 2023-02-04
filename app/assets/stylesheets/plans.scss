@@ -10,6 +10,7 @@
   justify-content: center;
   h3 {
     margin-right: 32px;
+    font-weight: bold;
   }
   p {
     width: 240px;
@@ -42,7 +43,7 @@
     width: 300px;
     z-index: 1100;
     background: #fff;
-    padding: 2%;
+    padding: 36px 0;
     top: 50%;
     left: 50%;
     transform: translate(-50%,-50%);
