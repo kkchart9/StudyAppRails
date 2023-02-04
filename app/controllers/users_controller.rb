@@ -40,7 +40,7 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
     if @user.update(user_params)
       # 更新に成功した場合を扱う。
-      flash[:success] = "プロフィールを変更しました"
+      flash[:success] = "設定を変更しました"
       redirect_to @user
     else
       render 'edit'
