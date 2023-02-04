@@ -33,8 +33,15 @@
 </header>
 
 <script type="text/javascript" charset="utf-8">
+
     $('.menu-box').on('click', function () {
-        $(".menu").css("display", "block");
+        let state = $(".menu").css("display");
+        console.log(state);
+        if (state == "block") {
+            $(".menu").css("display", "none");
+        } else {
+            $(".menu").css("display", "block");
+        }
     });
 
 </script>
