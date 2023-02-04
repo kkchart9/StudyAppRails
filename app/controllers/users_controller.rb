@@ -21,8 +21,11 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params)
     if @user.save
-      @user.send_activation_email
-      flash[:info] = "Please check your email to activate your account."
+      @user.update_columns(activated: true, activated_at: Time.zone.now)
+      log_in @user
+      # @user.send_activation_email
+      # flash[:info] = "Please check your email to activate your account."
+      flash[:info] = "新規登録しました。ありがとうございます。"
       redirect_to root_url
     else
       render 'new'
