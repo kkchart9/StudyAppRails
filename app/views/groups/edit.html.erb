@@ -1,0 +1,49 @@
+
+<% if @group.create_user_id == current_user.id %>
+  <h3>作成したグループ</h3>
+<% else %>
+  <h3>招待されたグループ</h3>
+<% end %>
+<h5><%= @group.name %></h5>
+<ul>
+  <% @members.each do |member| %>
+    <li>
+      <%= link_to member.name, user_path(member) %>
+      <button><%= link_to "削除", remove_group_path(@group, :user_id => member.id), method: :delete,
+                          data: { confirm: "このグループから"+ member.name + "を削除します。本当によろしいですか？" } %></button>
+    </li>
+    <% end %>
+</ul>
+
+<% if @group.create_user_id == current_user.id %>
+  <div class="member-register">
+    <button id="member-register" class="button">メンバーを追加する</button>
+  </div>
+  <div class="popup">
+    <div class="popup-background popup-close"></div>
+    <div class="popup-content">
+      <h4 class="popup-title">メンバーを追加する</h4>
+      <%= form_tag(add_group_path(@group), method: :post) do %>
+        <div><%= email_field_tag :email, nil, placeholder: "追加したいユーザーのメールアドレス" %></div>
+        <div class="popup-btn">
+          <%= submit_tag "追加", class: "btn-primary popup-submit" %>
+          <div class="popup-close">閉じる</div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <%= link_to "グループ削除", @group, method: :delete,
+              data: { confirm: "このグループを削除します。本当によろしいですか？" } %>
+<% end %>
+
+
+<script type="text/javascript" charset="utf-8">
+    $('#member-register').on('click', function () {
+        $('.popup').fadeIn();
+    });
+
+    $('.popup-close').on('click', function () {
+        $('.popup').fadeOut();
+    });
+</script>

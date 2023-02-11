@@ -19,10 +19,18 @@ Rails.application.routes.draw do
       get :following, :followers
     end
   end
+  resources :groups do
+    member do
+      post :add
+      get :remove
+    end
+  end
   resources :account_activations, only: [:edit]
   resources :password_resets, only: [:new, :create, :edit, :update]
   resources :microposts, only: [:create, :destroy]
   resources :relationships, only: [:create, :destroy]
   resources :works, only: [:index, :create, :destroy]
   resources :plans, only: [:index, :create, :edit, :update]
+  resources :groups, only: [:index, :create, :show, :destroy]
+  # resources :members, only: [:create, :destroy]
 end

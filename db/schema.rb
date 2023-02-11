@@ -10,7 +10,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20230122073347) do
+ActiveRecord::Schema.define(version: 20230210104728) do
+
+  create_table "groups", force: :cascade do |t|
+    t.string   "name"
+    t.integer  "create_user_id"
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+    t.string   "color"
+  end
+
+  create_table "members", force: :cascade do |t|
+    t.integer  "user_id"
+    t.integer  "group_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["group_id"], name: "index_members_on_group_id"
+    t.index ["user_id"], name: "index_members_on_user_id"
+  end
 
   create_table "microposts", force: :cascade do |t|
     t.text     "content"

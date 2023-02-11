@@ -1,0 +1,57 @@
+<%
+  admin_groups = @groups[0]
+  not_admin_groups = @groups[1]
+%>
+
+<div class="group-home">
+  <h1>グループ一覧画面</h1>
+  <div class="group-register">
+    <button id="group-register" class="button">グループを作成する</button>
+  </div>
+
+  <h3>作成したグループ</h3>
+  <li>
+    <% admin_groups.each do |group| %>
+      <ul class="group">
+        <%= link_to group.name, group_path(group) %>
+      </ul>
+    <% end %>
+  </li>
+  <h3>招待されたグループ</h3>
+  <li>
+    <% not_admin_groups.each do |group| %>
+      <ul class="group">
+        <%= link_to group.name, group_path(group) %>
+      </ul>
+    <% end %>
+  </li>
+
+
+  <div class="popup">
+    <div class="popup-background popup-close"></div>
+    <div class="popup-content">
+      <h4 class="popup-title">グループを作成する</h4>
+
+      <%= form_for(@group, url: groups_path) do |f| %>
+        <div><%= f.text_field :name, :placeholder => "作成するグループの名前" %></div>
+<!--        <div class="color">グループの色　<%#= f.color_field :color %></div>-->
+        <div class="popup-btn">
+          <%= f.submit "登録", class: "btn-primary popup-submit" %>
+          <div class="popup-close">閉じる</div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+
+
+<script type="text/javascript" charset="utf-8">
+    $('#group-register').on('click', function () {
+        $('.popup').fadeIn();
+    });
+
+    $('.popup-close').on('click', function () {
+        $('.popup').fadeOut();
+    });
+</script>
