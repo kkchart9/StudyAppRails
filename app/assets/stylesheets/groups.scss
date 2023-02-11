@@ -1,0 +1,31 @@
+// Place all the styles related to the Groups controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+.group-home {
+  li {
+    display: flex;
+    flex-wrap: wrap;
+    ul {
+      padding: 4px 32px;
+      background-color: #CCCCCC;
+      border: #999999 solid 1px;
+      margin-bottom: 8px;
+      margin-right: 16px;
+      border-radius: 8px;
+      text-align: center;
+      a {
+        font-size: 18px;
+        display: inline-block;
+      }
+    }
+  }
+  .group-register {
+    margin-top: 32px;
+    text-align: center;
+  }
+}
+
+#group-register {
+  padding: 4px 24px;
+}
