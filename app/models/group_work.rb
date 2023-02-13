@@ -1,0 +1,2 @@
+class GroupWork < ApplicationRecord
+end

@@ -1,0 +1,2 @@
+class GroupPlan < ApplicationRecord
+end
