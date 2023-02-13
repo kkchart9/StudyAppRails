@@ -9,6 +9,15 @@ class UsersController < ApplicationController
 
   def show
     @user = User.find(params[:id])
+    # 足跡機能の実装(他ユーザーがプロフィールを訪れた回数)
+    if @user != current_user
+      foot_print_cnt = @user[:foot_print]
+      if foot_print_cnt.nil?
+        foot_print_cnt = 0
+      end
+      foot_print_cnt = foot_print_cnt + 1
+      @user.update(foot_print: foot_print_cnt)
+    end
     @microposts = @user.microposts.paginate(page: params[:page])
     @plans = get_plan_week(Plan.where(user_id: params[:id]))
     redirect_to root_url and return unless @user.activated?

@@ -26,6 +26,18 @@
     <section class="stats">
       <%= render 'shared/stats' %>
     </section>
+    <% if @user == current_user %>
+      <p class="foot-print">
+        プロフィールを訪れられた回数
+      </p>
+      <div class="foot-print-cnt">
+        <% if @user.foot_print.nil? %>
+          0回
+        <% else %>
+          <%= @user.foot_print %>回
+        <% end %>
+      </div>
+    <% end %>
   </aside>
   <div class="col-md-8">
     <h3>1日の予定行動時間</h3>

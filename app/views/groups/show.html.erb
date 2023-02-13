@@ -1,3 +1,7 @@
+<%
+  @today = Date.today
+%>
+
 
 <% if @group.create_user_id == current_user.id %>
   <h3>作成したグループ</h3>
@@ -9,7 +13,7 @@
   <% @members.each do |member| %>
     <li>
       <%= link_to member.name, user_path(member) %>
-      <button><%= link_to "削除", remove_group_path(@group, :user_id => member.id), method: :delete,
+      <button><%= link_to "削除", remove_group_path(@group, :user_id => member.id),
                           data: { confirm: "このグループから"+ member.name + "を削除します。本当によろしいですか？" } %></button>
     </li>
   <% end %>
@@ -19,7 +23,7 @@
   <div class="member-register">
     <button id="member-register" class="button">メンバーを追加する</button>
   </div>
-  <div class="popup">
+  <div class="member-popup">
     <div class="popup-background popup-close"></div>
     <div class="popup-content">
       <h4 class="popup-title">メンバーを追加する</h4>
@@ -37,15 +41,57 @@
               data: { confirm: "このグループを削除します。本当によろしいですか？" } %>
 <% end %>
 
+<div class="group-calender">
+  <div class="work-register">
+    <button id="work-register" class="button">行動時間を登録する</button>
+  </div>
+
+  <div class="work-popup">
+    <div class="popup-background popup-close"></div>
+    <div class="popup-content">
+      <h4 class="popup-title">行動時間を登録する</h4>
+
+      <%= form_for(@group_work, url: works_path) do |f| %>
+        <div class="popup-register">
+          <div class="popup-date">
+            <%= raw sprintf(
+                      f.date_select(
+                        :date,
+                        use_month_numbers: true,
+                        date_separator: '%s',
+                        default: { month: @today.month, day: @today.day }),
+                      '年 ', '月 ') + '日' %>
+          </div>
+          <div class="popup-time">
+            <%= f.select(:time_hour, [*0..23]) %>時間
+            <%= f.select(:time_minute, [*0..59]) %>分
+          </div>
+        </div>
+
+        <div class="popup-btn">
+          <%= f.submit "登録", class: "btn-primary popup-submit" %>
+          <div class="popup-close">閉じる</div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
 
 
 
 <script type="text/javascript" charset="utf-8">
     $('#member-register').on('click', function () {
-        $('.popup').fadeIn();
+        $('.member-popup').fadeIn();
     });
 
     $('.popup-close').on('click', function () {
-        $('.popup').fadeOut();
+        $('.member-popup').fadeOut();
+        $('.work-popup').fadeOut();
     });
+
+    $('#work-register').on('click', function () {
+        $('.work-popup').fadeIn();
+    });
+
 </script>

@@ -10,7 +10,29 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20230210104728) do
+ActiveRecord::Schema.define(version: 20230213121231) do
+
+  create_table "group_plans", force: :cascade do |t|
+    t.integer  "group_id"
+    t.integer  "day_of_week"
+    t.integer  "time_hour"
+    t.integer  "time_minute"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.index ["group_id"], name: "index_group_plans_on_group_id"
+  end
+
+  create_table "group_works", force: :cascade do |t|
+    t.integer  "user_id"
+    t.integer  "group_id"
+    t.date     "date"
+    t.integer  "time_hour"
+    t.integer  "time_minute"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.index ["group_id"], name: "index_group_works_on_group_id"
+    t.index ["user_id"], name: "index_group_works_on_user_id"
+  end
 
   create_table "groups", force: :cascade do |t|
     t.string   "name"
@@ -73,6 +95,7 @@ ActiveRecord::Schema.define(version: 20230210104728) do
     t.string   "reset_digest"
     t.datetime "reset_sent_at"
     t.string   "picture"
+    t.integer  "foot_print"
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 

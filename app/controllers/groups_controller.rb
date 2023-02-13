@@ -22,6 +22,8 @@ class GroupsController < ApplicationController
     @group = Group.find(params[:id])
     @members = @group.users
     @member = Member.new
+
+    @group_work = GroupWork.new
   end
 
 
@@ -34,13 +36,15 @@ class GroupsController < ApplicationController
     else
       flash[:info] = "ユーザーが見つかりませんでした。入力を確認の上、もう一度お試しください。"
     end
-    redirect_to edit_group_path(@group)
+    redirect_to group_path(@group)
   end
 
   def remove
-    @groups = Member.where(group_id: params[:id])
-    @member = @groups.find_by(user_id: params[:user_id])
-    flash[:success] = @member.name + "を削除しました。"
+    @members = Member.where(group_id: params[:id])
+    @member = @members.find_by(user_id: params[:user_id])
+    @user = User.find(params[:user_id])
+    @group = Group.find(params[:id])
+    flash[:success] = @user.name + "を" + @group.name +  "から削除しました。"
     @member.destroy
     redirect_to groups_path
   end

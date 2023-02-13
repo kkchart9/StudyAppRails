@@ -369,7 +369,7 @@ span.picture {
   }
 }
 
-.popup {
+.popup, .member-popup, .work-popup {
   display: none;
   .popup-background {
     /* 画面全体を暗くする透過背景 */
@@ -614,6 +614,19 @@ span.picture {
       margin-left: 24px;
     }
   }
+}
+
+.foot-print {
+  margin-top: 24px;
+  font-size: 12px;
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.foot-print-cnt {
+  font-weight: bold;
+  text-align: center;
+  font-size: 14px;
 }
 
 
