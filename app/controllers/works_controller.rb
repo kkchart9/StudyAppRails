@@ -19,10 +19,10 @@ class WorksController < ApplicationController
     @microposts = current_user.microposts.build(content: content_tx)
 
     if @work[:work_time_hour] == 0 and @work[:work_time_minute] == 0
-      flash[:info] = "登録に失敗しました。もう一度、入力をお確かめの上ご登録お願いします。"
+      flash[:danger] = "登録に失敗しました。もう一度、入力をお確かめの上ご登録お願いします。"
       redirect_to root_url
     elsif @work.save and @microposts.save
-      flash[:info] = "登録しました。"
+      flash[:success] = "登録しました。"
       redirect_to root_url
     else
       flash[:danger] = "登録に失敗しました。もう一度、入力をお確かめの上ご登録お願いします。"
