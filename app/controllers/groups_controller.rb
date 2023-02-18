@@ -22,8 +22,14 @@ class GroupsController < ApplicationController
     @group = Group.find(params[:id])
     @members = @group.users
     @member = Member.new
+    @month = params[:month] ? Date.parse(params[:month]) : Date.today
+    @month_works = GroupWork.where(date: @month.all_month, group_id: @group.id)
+    @works_list = get_works_list(@month_works)
+    @total_day_works = get_total_day_works(@works_list)
+    @plans = get_plan_week(GroupPlan.where(group_id: params[:id]))
 
     @group_work = GroupWork.new
+    @group_plan = GroupPlan.new
   end
 
 
@@ -74,5 +80,46 @@ class GroupsController < ApplicationController
       end
     end
     return admin_groups, not_admin_groups
+  end
+
+  def get_works_list(month_works)
+    works_list = {}
+    month_works.each do |work|
+      work_time = (work.time_hour.to_i*60) + work.time_minute.to_i
+      # work_time = work.work_time_hour.to_s + ":" + work.work_time_minute.to_s
+
+      if works_list[work.date.day]
+        works_list[work.date.day].push([work[:id], work_time])
+      else
+        works_list[work.date.day] = [[work[:id], work_time]]
+      end
+    end
+    return works_list
+  end
+
+  def get_total_day_works(works_list)
+    total_works_list = {}
+    works_list.each do |work_times|
+      key = work_times[0]
+      val = work_times[1]
+      minute = 0
+      val.each do |time|
+        minute += time[1].to_i
+      end
+      total_works_list[key] = minute
+    end
+
+    return total_works_list
+  end
+
+  def get_plan_week(plans)
+    plan_week = {}
+    plans.each do |plan|
+      key = plan[:day_of_week]
+      val = (plan[:time_hour]*60) + plan[:time_minute]
+      plan_week[key] = val
+    end
+
+    return plan_week
   end
 end

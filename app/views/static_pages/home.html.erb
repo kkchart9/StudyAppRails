@@ -84,12 +84,21 @@
 
     def get_bar_graph_per(time = 0, plans, day_of_week)
       ans = 0
+      if time.nil?
+        return ans
+      end
+
       if time == 0
         return ans
       end
 
+      if plans[day_of_week].nil?
+        ans = 100
+        return ans
+      end
+
       if plans[day_of_week] == 0
-        ans == 100
+        ans = 100
         return ans
       end
 
@@ -226,8 +235,7 @@
           </div>
           <div class="work-achievement">
             <% if @plans[Date.new(year, month, day+1).wday] %>
-              <%= link_to get_total_time_per(@plans[Date.new(year, month, day+1).wday], @total_day_works[day+1], day+1).to_s + "%", plans_path%>
-              <%#= get_total_time_per(@plans[Date.new(year, month, day+1).wday], @total_day_works[day+1]) %>
+              <%= link_to get_total_time_per(@plans[Date.new(year, month, day+1).wday], @total_day_works[day+1], day+1).to_s + "%", plans_path %>
             <% else %>
               <% if @total_day_works[day+1] %>
                 <%= link_to "100%", plans_path %>
@@ -235,9 +243,7 @@
                 <%= link_to "0%", plans_path %>
               <% end %>
             <% end %>
-
           </div>
-
         </div>
         <div class="work-detail-<%= day+1 %> works-detail">
           <div class="details">
@@ -258,7 +264,7 @@
                       <span class="index"><%= ind+1 %>.</span>
                       <%= get_time_ja_text(time) %>
                       <button class="button"><%= link_to "削除", work_path(work_id), method: :delete,
-                                          data: { confirm: month.to_s + "月" + day.to_s + "日の" + get_time_ja_text(time) + "のデータを本当に削除しますか？" } %></button>
+                                          data: { confirm: month.to_s + "月" + (day+1).to_s + "日の" + get_time_ja_text(time) + "のデータを本当に削除しますか？" } %></button>
                     </li>
 
                   <% end %>

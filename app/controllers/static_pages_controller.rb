@@ -32,7 +32,6 @@ class StaticPagesController < ApplicationController
     works_list = {}
     month_works.each do |work|
       work_time = (work.work_time_hour.to_i*60) + work.work_time_minute.to_i
-      # work_time = work.work_time_hour.to_s + ":" + work.work_time_minute.to_s
 
       if works_list[work.work_date.day]
         works_list[work.work_date.day].push([work[:id], work_time])
@@ -40,8 +39,6 @@ class StaticPagesController < ApplicationController
         works_list[work.work_date.day] = [[work[:id], work_time]]
       end
     end
-    p "==========="
-    p works_list
     return works_list
   end
 

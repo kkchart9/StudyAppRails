@@ -1,83 +1,287 @@
 <%
   @today = Date.today
+  last_day = params[:month] ? Date.new(Date.parse(params[:month]).year, Date.parse(params[:month]).month, -1).day : Date.new(Date.today.year, Date.today.month, -1).day
+  month = params[:month] ? Date.parse(params[:month]).month : Date.today.month
+  year = params[:month] ? Date.parse(params[:month]).year : Date.today.year
+  youbi = ['日', '月', '火', '水', '木', '金', '土']
+  today = Date.today
+
+  def get_total_time_per(plan, time, day)
+    ans = 0
+    if time.nil?
+      return ans
+    end
+    if plan.nil?
+      return 100
+    end
+
+    ans = time.to_f / plan * 100
+    return sprintf("%.f", ans)
+  end
+
+  # 分数をテキストに変換
+  def get_time_text(minute)
+    hour_tx = (minute / 60).to_s
+    minute_tx = (minute % 60).to_s
+    if hour_tx.length == 1
+      hour_tx = "0" + hour_tx
+    end
+    if minute_tx.length == 1
+      minute_tx = "0" + minute_tx
+    end
+    time_tx = hour_tx + ':' + minute_tx
+    return  time_tx
+  end
+
+  # 分数を時間分のテキストに変換
+  def get_time_ja_text(minute)
+    hour_tx = (minute/60).to_s
+    minute_tx = (minute%60).to_s
+    if minute_tx.length == 1
+      minute_tx = "0" + minute_tx
+    end
+    time_tx = hour_tx + "時間" + minute_tx + "分"
+    return time_tx
+  end
+
+  def get_bar_graph_per(time = 0, plans, day_of_week)
+    ans = 0
+    if time.nil?
+      return ans
+    end
+
+    if time == 0
+      return ans
+    end
+
+    if plans[day_of_week].nil?
+      ans = 100
+      return ans
+    end
+
+    if plans[day_of_week] == 0
+      ans = 100
+      return ans
+    end
+
+    if plans[day_of_week]
+      ans = time.to_f / plans[day_of_week] * 100
+
+      if ans > 100
+        ans = 100
+      end
+    end
+    return sprintf("%.f", ans)
+  end
+
 %>
 
-
-<% if @group.create_user_id == current_user.id %>
-  <h3>作成したグループ</h3>
-<% else %>
-  <h3>招待されたグループ</h3>
-<% end %>
-<h5><%= @group.name %></h5>
-<ul>
-  <% @members.each do |member| %>
-    <li>
-      <%= link_to member.name, user_path(member) %>
-      <button><%= link_to "削除", remove_group_path(@group, :user_id => member.id),
-                          data: { confirm: "このグループから"+ member.name + "を削除します。本当によろしいですか？" } %></button>
-    </li>
+<div class="group-show">
+  <% if @group.create_user_id == current_user.id %>
+    <h3>作成したグループ</h3>
+  <% else %>
+    <h3>招待されたグループ</h3>
   <% end %>
-</ul>
+  <h5 class="member-group-title"><%= @group.name %></h5>
+  <h6>メンバー</h6>
 
-<% if @group.create_user_id == current_user.id %>
-  <div class="member-register">
-    <button id="member-register" class="button">メンバーを追加する</button>
-  </div>
-  <div class="member-popup">
-    <div class="popup-background popup-close"></div>
-    <div class="popup-content">
-      <h4 class="popup-title">メンバーを追加する</h4>
-      <%= form_tag(add_group_path(@group), method: :post) do %>
-        <div><%= email_field_tag :email, nil, placeholder: "追加したいユーザーのメールアドレス" %></div>
-        <div class="popup-btn">
-          <%= submit_tag "追加", class: "btn-primary popup-submit" %>
-          <div class="popup-close">閉じる</div>
-        </div>
+  <% if @group.create_user_id == current_user.id %>
+    <div class="member-register">
+      <button id="member-register" class="button">メンバーの詳細</button>
+      <%= link_to "グループ削除", @group, method: :delete,
+                  data: { confirm: "このグループを削除します。本当によろしいですか？" } %>
+    </div>
+    <div class="member-popup">
+      <div class="popup-background popup-close"></div>
+      <div class="popup-content">
+        <h4 class="popup-title">メンバーを追加する</h4>
+        <%= form_tag(add_group_path(@group), method: :post) do %>
+          <div><%= email_field_tag :email, nil, placeholder: "ユーザーのメールアドレス" %></div>
+
+          <h4>現在のメンバー</h4>
+          <ul class="members">
+            <% @members.each do |member| %>
+              <li class="member">
+                <%= link_to member.name, user_path(member) %>
+
+                <%= link_to "削除", remove_group_path(@group, :user_id => member.id),
+                                    data: { confirm: "このグループから"+ member.name + "を削除します。本当によろしいですか？" } %>
+              </li>
+            <% end %>
+          </ul>
+
+          <div class="popup-btn">
+            <%= submit_tag "追加", class: "btn-primary popup-submit" %>
+            <div class="popup-close">閉じる</div>
+          </div>
+        <% end %>
+
+      </div>
+    </div>
+
+  <% end %>
+
+  <div class="group-plan">
+    <h6>グループの予定行動時間</h6>
+    <button id="plan-register" class="button">予定時間を登録する</button>
+
+    <div class="plan-popup">
+      <div class="popup-background popup-close"></div>
+      <div class="popup-content">
+        <h4 class="popup-title">予定時間を登録する</h4>
+
+        <%= form_for(@group_plan, url: groups_plans_path(:group_id => @group.id)) do |f| %>
+          <div class="popup-register">
+            <div class="popup-youbi">
+              <%= f.select :day_of_week, youbi.map.with_index.to_h %>曜日
+            </div>
+            <div class="popup-time">
+              <%= f.select(:time_hour, [*0..23]) %>時間
+              <%= f.select(:time_minute, [*0..59]) %>分
+            </div>
+          </div>
+          <div class="popup-btn">
+            <%= f.submit "登録", class: "btn-primary popup-submit" %>
+            <div class="popup-close">閉じる</div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <table class="table">
+      <thead>
+      <tr>
+        <% 7.times do |t| %>
+          <th scope="col"><%= youbi[t] %></th>
+        <% end %>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <% 7.times do |t| %>
+          <% if @plans[t] %>
+            <th scope="col"><%= get_time_text(@plans[t]) %></th>
+          <% else %>
+            <th scope="col">00:00</th>
+          <% end %>
       <% end %>
+      </tr>
+    </table>
+  </div>
+
+  <div class="group-calender">
+    <div class="work-register">
+      <button id="work-register" class="button">行動時間を登録する</button>
+    </div>
+
+    <div class="work-popup">
+      <div class="popup-background popup-close"></div>
+      <div class="popup-content">
+        <h4 class="popup-title">行動時間を登録する</h4>
+
+        <%= form_for(@group_work, url: groups_works_path(:group_id => @group.id)) do |f| %>
+          <div class="popup-register">
+            <div class="popup-date">
+              <%= raw sprintf(
+                        f.date_select(
+                          :date,
+                          use_month_numbers: true,
+                          date_separator: '%s',
+                          default: { month: @today.month, day: @today.day }),
+                        '年 ', '月 ') + '日' %>
+            </div>
+            <div class="popup-time">
+              <%= f.select(:time_hour, [*0..23]) %>時間
+              <%= f.select(:time_minute, [*0..59]) %>分
+            </div>
+          </div>
+
+          <div class="popup-btn">
+            <%= f.submit "登録", class: "btn-primary popup-submit" %>
+            <div class="popup-close">閉じる</div>
+          </div>
+        <% end %>
+      </div>
     </div>
   </div>
 
-  <%= link_to "グループ削除", @group, method: :delete,
-              data: { confirm: "このグループを削除します。本当によろしいですか？" } %>
-<% end %>
+  <li class="month-display">
+    <ul><%= link_to "<< " + @month.prev_month.month.to_s + "月", group_path(@group, month:@month.prev_month) %></ul>
+    <ul class="middle"><%= @month.month %>月</ul>
+    <ul><%= link_to @month.next_month.month.to_s + "月 >>", group_path(@group, month:@month.next_month) %></ul>
+  </li>
 
-<div class="group-calender">
-  <div class="work-register">
-    <button id="work-register" class="button">行動時間を登録する</button>
-  </div>
-
-  <div class="work-popup">
-    <div class="popup-background popup-close"></div>
-    <div class="popup-content">
-      <h4 class="popup-title">行動時間を登録する</h4>
-
-      <%= form_for(@group_work, url: works_path) do |f| %>
-        <div class="popup-register">
-          <div class="popup-date">
-            <%= raw sprintf(
-                      f.date_select(
-                        :date,
-                        use_month_numbers: true,
-                        date_separator: '%s',
-                        default: { month: @today.month, day: @today.day }),
-                      '年 ', '月 ') + '日' %>
-          </div>
-          <div class="popup-time">
-            <%= f.select(:time_hour, [*0..23]) %>時間
-            <%= f.select(:time_minute, [*0..59]) %>分
-          </div>
-        </div>
-
-        <div class="popup-btn">
-          <%= f.submit "登録", class: "btn-primary popup-submit" %>
-          <div class="popup-close">閉じる</div>
-        </div>
-      <% end %>
+  <div class="works-content">
+    <div class="works">
+      <div class="date">日付</div>
+      <div class="work-title">習慣達成度<span>（クリックすると詳細が見れます。）</span></div>
+      <div class="work-achievement-title">パーセント</div>
     </div>
+
+    <% last_day.times do |day| %>
+      <div class="works" value="<%= day+1 %>">
+        <div class="date">
+          <%= day+1 %>(<%= youbi[Date.new(year, month, day+1).wday] %>)
+        </div>
+        <div class="work">
+          <div class="work-bar" style="width:<%= get_bar_graph_per(@total_day_works[day+1], @plans, Date.new(year, month, day+1).wday) %>%;">
+          </div>
+        </div>
+        <div class="work-achievement">
+          <% if @plans[Date.new(year, month, day+1).wday] %>
+            <%= get_total_time_per(@plans[Date.new(year, month, day+1).wday], @total_day_works[day+1], day+1).to_s + "%"%>
+          <% else %>
+            <% if @total_day_works[day+1] %>
+              100%
+            <% else %>
+              0%
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="work-detail-<%= day+1 %> works-detail">
+        <div class="details">
+          <% if @works_list[day+1] %>
+            <% if @plans[Date.new(year, month, day+1).wday] %>
+              <h5 class="plan-time">予定時間<span><%= get_time_ja_text(@plans[Date.new(year, month, day+1).wday]) %></span></h5>
+            <% else %>
+              <h5 class="plan-time">予定時間<span>0時間00分</span></h5>
+            <% end %>
+            <h5 class="sum-time">合計時間<span><%= get_time_ja_text(@total_day_works[day+1]) %></span></h5>
+            <div class="detail-time">
+              <h5>詳細時間</h5>
+              <ul>
+                <% @works_list[day+1].each_with_index do |work, ind| %>
+                  <% work_id = work[0] %>
+                  <% time = work[1] %>
+                  <li>
+                    <span class="index"><%= ind+1 %>.</span>
+                    <%= get_time_ja_text(time) %>
+                    <button class="button">
+                      <%= link_to "削除", groups_work_path(work_id), method: :delete,
+                                  data: { confirm: month.to_s + "月" + (day+1).to_s + "日の" + get_time_ja_text(time) + "のデータを本当に削除しますか？" } %>
+                    </button>
+                  </li>
+
+                <% end %>
+              </ul>
+            </div>
+          <% else %>
+            <% if @plans[Date.new(year, month, day+1).wday] %>
+              <h5 class="plan-time">予定時間<span><%= get_time_ja_text(@plans[Date.new(year, month, day+1).wday]) %></span></h5>
+            <% else %>
+              <h5 class="plan-time">予定時間<span>0時間00分</span></h5>
+            <% end %>
+            <p class="">この日の行動は何もありません。</p>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
   </div>
+
+
 </div>
-
-
 
 
 <script type="text/javascript" charset="utf-8">
@@ -88,10 +292,27 @@
     $('.popup-close').on('click', function () {
         $('.member-popup').fadeOut();
         $('.work-popup').fadeOut();
+        $('.plan-popup').fadeOut();
     });
 
     $('#work-register').on('click', function () {
         $('.work-popup').fadeIn();
+    });
+
+    $('#plan-register').on('click', function () {
+        $('.plan-popup').fadeIn();
+    });
+
+    $('.works').on('click', function () {
+        const val = $(this).attr("value");
+        let state = $(".work-detail-" + val).css("display");
+
+        if (state == "none") {
+            $(".work-detail-" + val).css("display", "block");
+        } else {
+            $(".work-detail-" + val).css("display", "none");
+        }
+
     });
 
 </script>

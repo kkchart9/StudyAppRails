@@ -8,6 +8,8 @@ class User < ApplicationRecord
   has_many :plans, dependent: :destroy
   has_many :members
   has_many :groups, through: :members
+  has_many :group_works
+  has_many :group_plans
   attr_accessor :remember_token, :activation_token, :reset_token
   before_save :downcase_email
   before_create :create_activation_digest

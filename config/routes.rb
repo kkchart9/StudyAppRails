@@ -32,5 +32,7 @@ Rails.application.routes.draw do
   resources :works, only: [:index, :create, :destroy]
   resources :plans, only: [:index, :create, :edit, :update]
   resources :groups, only: [:index, :create, :show, :destroy]
+  resources :groups_works, only: [:create, :destroy]
+  resources :groups_plans, only: [:create]
   # resources :members, only: [:create, :destroy]
 end
