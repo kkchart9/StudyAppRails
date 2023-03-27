@@ -72,13 +72,13 @@ class PlansController < ApplicationController
 
     if pre_plan_data.nil?
       time = get_time_text(plan_data[:plan_time_hour], plan_data[:plan_time_minute])
-      text = youbi[plan_data[:plan_day_of_week].to_i] + "の行動予定時間を" + time+  "に新規登録しました。"
+      text = youbi[plan_data[:plan_day_of_week].to_i] + "曜日の行動予定時間を" + time+  "に新規登録しました。"
     else
       pre_time = get_time_text(pre_plan_data[:plan_time_hour], pre_plan_data[:plan_time_minute])
       time = get_time_text(plan_data[:plan_time_hour], plan_data[:plan_time_minute])
 
       if pre_plan_data[:plan_time_hour] == 0 and pre_plan_data[:plan_time_minute] == 0
-        text = youbi[plan_data[:plan_day_of_week].to_i] + "の行動予定時間を" + time+  "に新規登録しました。"
+        text = youbi[plan_data[:plan_day_of_week].to_i] + "曜日の行動予定時間を" + time+  "に新規登録しました。"
       else
         text = youbi[plan_data[:plan_day_of_week].to_i] + "曜日の行動予定時間を" + pre_time + "から"+ time + "に変更しました。"
       end
