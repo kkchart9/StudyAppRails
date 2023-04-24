@@ -2,7 +2,7 @@ class GroupsPlansController < ApplicationController
   before_action :logged_in_user, only: [:create, :destroy]
 
   def create
-    @group_plan = GroupPlan.new(groups_plans_params.merge(group_id: params[:group_id]))
+    @group_plan = GroupPlan.new(groups_plans_params.merge(group_id: params[:group_id], user_id: current_user[:id]))
     pre_plan_data = GroupPlan.where(group_id: params[:group_id]).find_by(day_of_week: groups_plans_params["day_of_week"], user_id: groups_plans_params["user_id"])
 
     if @group_plan[:time_hour] == 0 && @group_plan[:time_minute] == 0
@@ -36,6 +36,6 @@ class GroupsPlansController < ApplicationController
   private
 
   def groups_plans_params
-    params.require(:group_plan).permit(:day_of_week, :time_hour, :time_minute, :user_id)
+    params.require(:group_plan).permit(:day_of_week, :time_hour, :time_minute)
   end
 end
