@@ -19,24 +19,15 @@
     return sprintf("%.f", ans)
   end
 
-  # 分数をテキストに変換
-  def get_time_text(minute)
-    hour_tx = (minute / 60).to_s
-    minute_tx = (minute % 60).to_s
-    if hour_tx.length == 1
-      hour_tx = "0" + hour_tx
-    end
-    if minute_tx.length == 1
-      minute_tx = "0" + minute_tx
-    end
-    time_tx = hour_tx + ':' + minute_tx
-    return  time_tx
-  end
-
   # 分数を時間分のテキストに変換
   def get_time_ja_text(minute)
-    hour_tx = (minute/60).to_s
-    minute_tx = (minute%60).to_s
+    if minute.nil?
+      hour_tx = '0'
+      minute_tx = '0'
+    else
+      hour_tx = (minute/60).to_s
+      minute_tx = (minute%60).to_s
+    end
     if minute_tx.length == 1
       minute_tx = "0" + minute_tx
     end
@@ -77,13 +68,16 @@
 %>
 
 <div class="group-show">
-  <% if @group.create_user_id == current_user.id %>
-    <h3>作成したグループ</h3>
-  <% else %>
-    <h3>招待されたグループ</h3>
-  <% end %>
-  <h5 class="member-group-title"><%= @group.name %></h5>
-  <h6>メンバー</h6>
+  <%
+    def group_type(user_id)
+      if user_id == current_user.id
+        return '作成したグループ'
+      else
+        return '招待されたグループ'
+      end
+    end
+  %>
+  <h5 class="member-group-title"><%= @group.name %> - <%= group_type(@group.create_user_id) %></h5>
 
   <% if @group.create_user_id == current_user.id %>
     <div class="member-register">
@@ -135,6 +129,10 @@
             <div class="popup-youbi">
               <%= f.select :day_of_week, youbi.map.with_index.to_h %>曜日
             </div>
+            <div class="popup-user-id">
+              <%= f.label :user_id %>
+              <%= f.collection_select :user_id, Group.find(params[:id]).users, :id, :name %>
+            </div>
             <div class="popup-time">
               <%= f.select(:time_hour, [*0..23]) %>時間
               <%= f.select(:time_minute, [*0..59]) %>分
@@ -148,24 +146,52 @@
       </div>
     </div>
 
+<!-- planの残骸-->
+<!--    <table class="table">-->
+<!--      <thead>-->
+<!--      <tr>-->
+<!--        <th scope="col"></th>-->
+        <%# 7.times do |t| %>
+<!--          <th scope="col"><%#= youbi[t] %></th>-->
+        <%# end %>
+<!--      </tr>-->
+<!--      </thead>-->
+<!--      <tbody>-->
+<!--      <tr>-->
+<!--        <th scope="col">taro</th>-->
+        <%# 7.times do |t| %>
+          <%# if @plans[t] %>
+<!--            <th scope="col"><%#= get_time_text(@plans[t]) %></th>-->
+          <%# else %>
+<!--            <th scope="col">00:00</th>-->
+          <%# end %>
+
+      <%# end %>
+<!--      </tr>-->
+<!--    </table>-->
+
     <table class="table">
       <thead>
       <tr>
+        <th scope="col"></th>
         <% 7.times do |t| %>
           <th scope="col"><%= youbi[t] %></th>
         <% end %>
       </tr>
       </thead>
       <tbody>
-      <tr>
-        <% 7.times do |t| %>
-          <% if @plans[t] %>
-            <th scope="col"><%= get_time_text(@plans[t]) %></th>
-          <% else %>
-            <th scope="col">00:00</th>
+      <% @member_plans.each do |member| %>
+        <tr>
+          <th scope="col"><%= User.find(member[0]).name %></th>
+          <% 7.times do |t| %>
+            <% if member[1][t] %>
+              <th scope="col"><%= get_time_text(member[1][t]) %></th>
+            <% else %>
+              <th scope="col">-----</th>
+            <% end %>
           <% end %>
+        </tr>
       <% end %>
-      </tr>
     </table>
   </div>
 
@@ -224,12 +250,12 @@
           <%= day+1 %>(<%= youbi[Date.new(year, month, day+1).wday] %>)
         </div>
         <div class="work">
-          <div class="work-bar" style="width:<%= get_bar_graph_per(@total_day_works[day+1], @plans, Date.new(year, month, day+1).wday) %>%;">
+          <div class="work-bar" style="width:<%= get_bar_graph_per(@total_day_works[day+1], @member_total_plans, Date.new(year, month, day+1).wday) %>%;">
           </div>
         </div>
         <div class="work-achievement">
-          <% if @plans[Date.new(year, month, day+1).wday] %>
-            <%= get_total_time_per(@plans[Date.new(year, month, day+1).wday], @total_day_works[day+1], day+1).to_s + "%"%>
+          <% if @member_total_plans[Date.new(year, month, day+1).wday] %>
+            <%= get_total_time_per(@member_total_plans[Date.new(year, month, day+1).wday], @total_day_works[day+1], day+1).to_s + "%"%>
           <% else %>
             <% if @total_day_works[day+1] %>
               100%
@@ -243,35 +269,39 @@
       <div class="work-detail-<%= day+1 %> works-detail">
         <div class="details">
           <% if @works_list[day+1] %>
-            <% if @plans[Date.new(year, month, day+1).wday] %>
-              <h5 class="plan-time">予定時間<span><%= get_time_ja_text(@plans[Date.new(year, month, day+1).wday]) %></span></h5>
+            <% if @member_total_plans[Date.new(year, month, day+1).wday] %>
+              <h5 class="plan-time">合計予定時間<span><%= get_time_ja_text(@member_total_plans[Date.new(year, month, day+1).wday]) %></span></h5>
             <% else %>
-              <h5 class="plan-time">予定時間<span>0時間00分</span></h5>
+              <h5 class="plan-time">合計予定時間<span>0時間00分</span></h5>
             <% end %>
-            <h5 class="sum-time">合計時間<span><%= get_time_ja_text(@total_day_works[day+1]) %></span></h5>
+            <h5 class="sum-time">合計行動時間<span><%= get_time_ja_text(@total_day_works[day+1]) %></span></h5>
             <div class="detail-time">
               <h5>詳細時間</h5>
               <ul>
                 <% @works_list[day+1].each_with_index do |work, ind| %>
                   <% work_id = work[0] %>
-                  <% time = work[1] %>
+                  <% work_time = work[1] %>
+                  <% user_id = work[2] %>
+                  <% user_name = User.find(user_id)[:name] %>
                   <li>
                     <span class="index"><%= ind+1 %>.</span>
-                    <%= get_time_ja_text(time) %>
-                    <button class="button">
-                      <%= link_to "削除", groups_work_path(work_id), method: :delete,
-                                  data: { confirm: month.to_s + "月" + (day+1).to_s + "日の" + get_time_ja_text(time) + "のデータを本当に削除しますか？" } %>
-                    </button>
+                    <%= get_time_ja_text(work_time) %>　（<%= user_name %>）
+                    <% if user_id == current_user[:id] or current_user[:id] == @group.create_user_id %>
+                      <button class="button">
+                        <%= link_to "削除", groups_work_path(work_id), method: :delete,
+                                    data: { confirm: month.to_s + "月" + (day+1).to_s + "日の" + user_name + "の" + get_time_ja_text(work_time) +  "の""データを本当に削除しますか？" } %>
+                      </button>
+                    <% end %>
                   </li>
 
                 <% end %>
               </ul>
             </div>
           <% else %>
-            <% if @plans[Date.new(year, month, day+1).wday] %>
-              <h5 class="plan-time">予定時間<span><%= get_time_ja_text(@plans[Date.new(year, month, day+1).wday]) %></span></h5>
+            <% if @member_total_plans[Date.new(year, month, day+1).wday] %>
+              <h5 class="plan-time">合計予定時間<span><%= get_time_ja_text(@member_total_plans[Date.new(year, month, day+1).wday]) %></span></h5>
             <% else %>
-              <h5 class="plan-time">予定時間<span>0時間00分</span></h5>
+              <h5 class="plan-time">合計予定時間<span>0時間00分</span></h5>
             <% end %>
             <p class="">この日の行動は何もありません。</p>
           <% end %>

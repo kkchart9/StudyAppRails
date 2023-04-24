@@ -19,14 +19,18 @@ class GroupsController < ApplicationController
   end
 
   def show
+    member_list = Member.where(group_id: params[:id]).pluck(:user_id)
     @group = Group.find(params[:id])
     @members = @group.users
     @member = Member.new
     @month = params[:month] ? Date.parse(params[:month]) : Date.today
-    @month_works = GroupWork.where(date: @month.all_month, group_id: @group.id)
+    @month_works = GroupWork.where(date: @month.all_month, group_id: @group.id, user_id: member_list)
     @works_list = get_works_list(@month_works)
     @total_day_works = get_total_day_works(@works_list)
     @plans = get_plan_week(GroupPlan.where(group_id: params[:id]))
+
+    @member_total_plans = get_member_total_plan(GroupPlan.where(group_id: params[:id], user_id: member_list))
+    @member_plans = get_member_plan(params[:id], member_list)
 
     @group_work = GroupWork.new
     @group_plan = GroupPlan.new
@@ -82,6 +86,8 @@ class GroupsController < ApplicationController
     return admin_groups, not_admin_groups
   end
 
+  # 日付に対する行動時間
+  # { date => [ :id, work_time{合計時間}, :user_id ]}
   def get_works_list(month_works)
     works_list = {}
     month_works.each do |work|
@@ -89,9 +95,9 @@ class GroupsController < ApplicationController
       # work_time = work.work_time_hour.to_s + ":" + work.work_time_minute.to_s
 
       if works_list[work.date.day]
-        works_list[work.date.day].push([work[:id], work_time])
+        works_list[work.date.day].push([work[:id], work_time, work[:user_id]])
       else
-        works_list[work.date.day] = [[work[:id], work_time]]
+        works_list[work.date.day] = [[work[:id], work_time, work[:user_id]]]
       end
     end
     return works_list
@@ -121,5 +127,45 @@ class GroupsController < ApplicationController
     end
 
     return plan_week
+  end
+
+  # グループメンバーごとの行動予定時間を曜日ごとにリスト化する
+  # { user_id => { day_of_week => time } }
+  def get_member_plan(group_id, members)
+    group_plans = GroupPlan.where(group_id: group_id).where(user_id: members)
+    members_plan = {}
+
+    members.each do |member|
+      member_plans = group_plans.where(user_id: member)
+      if member_plans.empty?
+        members_plan[member] = {}
+      else
+        plans = {}
+        member_plans.each do |plan|
+          time = plan[:time_hour] * 60 + plan[:time_minute]
+          plans[plan[:day_of_week]] = time
+        end
+        members_plan[member] = plans
+      end
+    end
+
+    return members_plan
+  end
+
+  def get_member_total_plan(month_works)
+
+    member_total_plan = {}
+    month_works.each do |plan|
+      key = plan[:day_of_week]
+      val = (plan[:time_hour]*60) + plan[:time_minute]
+
+      if member_total_plan[key]
+        member_total_plan[key] += val
+      else
+        member_total_plan[key] = val
+      end
+    end
+
+    return member_total_plan
   end
 end

@@ -3,7 +3,13 @@ class GroupsPlansController < ApplicationController
 
   def create
     @group_plan = GroupPlan.new(groups_plans_params.merge(group_id: params[:group_id]))
-    pre_plan_data = GroupPlan.where(group_id: params[:group_id]).find_by(day_of_week: groups_plans_params["day_of_week"])
+    pre_plan_data = GroupPlan.where(group_id: params[:group_id]).find_by(day_of_week: groups_plans_params["day_of_week"], user_id: groups_plans_params["user_id"])
+
+    if @group_plan[:time_hour] == 0 && @group_plan[:time_minute] == 0
+      flash[:danger] = "0分の行動予定は登録できません。"
+      redirect_to group_path(@group_plan.group_id)
+      return
+    end
 
     if pre_plan_data.nil?
       if @group_plan.save
@@ -30,6 +36,6 @@ class GroupsPlansController < ApplicationController
   private
 
   def groups_plans_params
-    params.require(:group_plan).permit(:day_of_week, :time_hour, :time_minute)
+    params.require(:group_plan).permit(:day_of_week, :time_hour, :time_minute, :user_id)
   end
 end
