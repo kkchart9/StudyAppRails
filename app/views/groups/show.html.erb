@@ -129,10 +129,10 @@
             <div class="popup-youbi">
               <%= f.select :day_of_week, youbi.map.with_index.to_h %>曜日
             </div>
-            <div class="popup-user-id">
-              <%= f.label :user_id %>
-              <%= f.collection_select :user_id, Group.find(params[:id]).users, :id, :name %>
-            </div>
+<!--            <div class="popup-user-id">-->
+<!--              <%#= f.label :user_id %>c-->
+              <%#= f.collection_select :user_id, Group.find(params[:id]).users, :id, :name %>
+<!--            </div>-->
             <div class="popup-time">
               <%= f.select(:time_hour, [*0..23]) %>時間
               <%= f.select(:time_minute, [*0..59]) %>分
