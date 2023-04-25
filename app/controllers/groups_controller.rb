@@ -32,6 +32,7 @@ class GroupsController < ApplicationController
     @member_total_plans = get_member_total_plan(GroupPlan.where(group_id: params[:id], user_id: member_list))
     @member_plans = get_member_plan(params[:id], member_list)
 
+
     @group_work = GroupWork.new
     @group_plan = GroupPlan.new
   end

@@ -4,6 +4,11 @@ module ApplicationHelper
   def get_time_text(minute)
     hour_tx = (minute / 60).to_s
     minute_tx = (minute % 60).to_s
+
+    if minute == 0
+      return "-----"
+    end
+
     if hour_tx.length == 1
       hour_tx = "0" + hour_tx
     end

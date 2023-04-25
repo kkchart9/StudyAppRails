@@ -13,11 +13,6 @@ class PlansController < ApplicationController
     content_plan = get_content_plan_text(pre_plan_data, plan_params)
     @microposts = current_user.microposts.build(content: content_plan)
 
-    if plan_params["plan_time_hour"] == "0" && plan_params["plan_time_minute"] == "0"
-      flash[:danger] = "0分の行動予定は登録できません。"
-      redirect_to plans_path
-      return
-    end
 
     if pre_plan_data.nil?
       @plan = current_user.plans.build(plan_params)

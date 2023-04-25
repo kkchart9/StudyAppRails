@@ -20,20 +20,6 @@
       worked_hard = worked_hard_time
     end
 
-    # 分数をテキストに変換
-    def get_time_text(minute)
-      hour_tx = (minute / 60).to_s
-      minute_tx = (minute % 60).to_s
-      if hour_tx.length == 1
-        hour_tx = "0" + hour_tx
-      end
-      if minute_tx.length == 1
-        minute_tx = "0" + minute_tx
-      end
-      time_tx = hour_tx + ':' + minute_tx
-      return  time_tx
-    end
-
     # 分数を時間分のテキストに変換
     def get_time_ja_text(minute)
       hour_tx = (minute/60).to_s
@@ -76,6 +62,10 @@
       end
       if plan.nil?
         return 100
+      end
+      if plan == 0
+        ans = time.to_f / 60 * 100
+        return sprintf("%.f", ans)
       end
 
       ans = time.to_f / plan * 100
@@ -154,7 +144,7 @@
           <% if @plans[t] %>
             <th scope="col"><%= get_time_text(@plans[t]) %></th>
           <% else %>
-            <th scope="col">00:00</th>
+            <th scope="col">-----</th>
           <% end %>
         <% end %>
       </tr>
