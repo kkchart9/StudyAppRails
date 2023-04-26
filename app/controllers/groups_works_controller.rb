@@ -4,6 +4,12 @@ class GroupsWorksController < ApplicationController
   def create
     @group_work = current_user.group_works.build(groups_work_params.merge(group_id: params[:group_id]))
 
+    if @group_work[:time_hour] == 0 and @group_work[:time_minute] == 0
+      flash[:danger] = "0分の行動時間は登録できません。もう一度、入力をお確かめの上ご登録お願いします。"
+      redirect_to group_path(@group_work.group_id)
+      return
+    end
+
     if @group_work.save
       @group = Group.find(params[:group_id])
       flash[:success] = @group.name + "に行動時間を登録にしました。"
