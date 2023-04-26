@@ -23,6 +23,7 @@ Rails.application.routes.draw do
     member do
       post :add
       get :remove
+      get :detail
     end
   end
   resources :account_activations, only: [:edit]

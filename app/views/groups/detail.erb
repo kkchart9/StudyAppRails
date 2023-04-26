@@ -1,0 +1,33 @@
+<div class="group-show">
+  <%
+    def group_type(user_id)
+      if user_id == current_user.id
+        return '作成したグループ'
+      else
+        return '招待されたグループ'
+      end
+    end
+  %>
+  <h5 class="member-group-title"><%= @group.name %> - <%= group_type(@group.create_user_id) %></h5>
+
+  <h6 class="details-notes">※予定を登録していないもしくは、行動を登録していない場合はグラフに表示されません。</h6>
+</div>
+
+
+
+
+<% @member_list.each do |member| %>
+  <div class="user-chart">
+    <h4 class="user-name"><%= User.find(member).name %></h4>
+    <%= column_chart create_chart(@member_work[member], @member_plan[member]), ytitle: "パーセント" %>
+  </div>
+<% end %>
+
+
+<%#= column_chart create_chart(@member_work[member], @member_plan[member]) %>
+
+
+<!--
+userごとのデータを持たせる。
+user => [['月', 14(%)], ['火', 50(%)]]
+-->

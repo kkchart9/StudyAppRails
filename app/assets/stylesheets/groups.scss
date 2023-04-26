@@ -42,6 +42,10 @@
     margin-top: 16px;
     font-size: 18px;
   }
+  .details-notes {
+    color: red;
+    font-size: 14px;
+  }
   .member-register {
     margin-top: 16px;
     button {
@@ -73,5 +77,12 @@
   }
   .group-plan {
     margin-top: 24px;
+  }
+}
+
+.user-chart {
+  margin: 60px 0;
+  .user-name {
+    text-align: center;
   }
 }

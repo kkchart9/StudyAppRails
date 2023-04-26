@@ -1,5 +1,5 @@
 class GroupsController < ApplicationController
-  before_action :logged_in_user, only: [:index, :create, :show, :add, :remove, :destroy]
+  before_action :logged_in_user, only: [:index, :create, :show, :add, :remove, :destroy, :detail]
   # before_action :correct_user, only: :destroy
 
   def index
@@ -58,6 +58,23 @@ class GroupsController < ApplicationController
     flash[:success] = @user.name + "を" + @group.name +  "から削除しました。"
     @member.destroy
     redirect_to groups_path
+  end
+
+  def detail
+    group_id = params[:id]
+    member_list = Member.where(group_id: group_id).pluck(:user_id)
+    month = params[:month] ? Date.parse(params[:month]) : Date.today
+
+    @group = Group.find(group_id)
+    @work = GroupWork.where(date: month.all_month, group_id:group_id, user_id: member_list)
+
+    @member_plan = get_member_plan(group_id, member_list)
+    @member_work = get_member_total_work(group_id, member_list, month)
+    @wday_count = []
+    @member_list = member_list
+    7.times do |t|
+      @wday_count.push(month.all_month.select{|d| d.wday == t}.size)
+    end
   end
 
   def destroy
@@ -128,6 +145,30 @@ class GroupsController < ApplicationController
     end
 
     return plan_week
+  end
+
+  # グループメンバーごとの行動時間を曜日ごとにリスト化する
+  # { user_id => { day_of_week => total_time } }
+  def get_member_total_work(group_id, members, month)
+    group_works = GroupWork.where(group_id: group_id, user_id: members, date: month.all_month)
+    members_work = {}
+    members.each do |member|
+      members_work[member] = {}
+    end
+
+    group_works.each do |group_work|
+      time = group_work[:time_hour] * 60 + group_work[:time_minute]
+      user_id = group_work[:user_id]
+      day_of_week = group_work[:date].wday
+
+      if members_work[user_id][day_of_week].nil?
+        members_work[user_id][day_of_week] = time
+      else
+        members_work[user_id][day_of_week] += time
+      end
+    end
+
+    return members_work
   end
 
   # グループメンバーごとの行動予定時間を曜日ごとにリスト化する

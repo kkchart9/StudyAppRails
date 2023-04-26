@@ -28,6 +28,7 @@ gem 'net-pop'
 gem 'net-smtp'
 gem 'dotenv-rails'
 gem 'font-awesome-sass'
+gem "chartkick"
 
 group :development, :test do
   gem 'sqlite3', '1.3.13'
