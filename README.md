@@ -2,6 +2,8 @@
 ## 行動管理アプリ　WORK CHART
 
 [WORK CHART](https://mighty-tor-40228.herokuapp.com/)
+* MAILADDRESS: taro@example.jp
+* PASSWORD: password
 
 ## 使った技術
 * Docker
