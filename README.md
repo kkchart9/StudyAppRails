@@ -2,8 +2,10 @@
 ## 行動管理アプリ　WORK CHART
 
 [WORK CHART](https://mighty-tor-40228.herokuapp.com/)
+
+どういうアプリか確認の場合、下記でログインしてください。
 * MAILADDRESS: taro@example.jp
-* PASSWORD: password
+* PASSWORD: foobar
 
 ## 使った技術
 * Docker
